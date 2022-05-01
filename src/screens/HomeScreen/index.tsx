@@ -2,14 +2,14 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { ScreenProps } from '../../constants/types';
 
-interface HomeProps extends ScreenProps {
+interface HomeScreenProps extends ScreenProps {
 
 }
 
-export const Home = (props: HomeProps) => {
+export const HomeScreen = (props: HomeScreenProps) => {
     return(
         <View>
-            <Text>Home Screen</Text>
+            <Text>Is this even needed?</Text>
         </View>
     );
 }

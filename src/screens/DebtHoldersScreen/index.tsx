@@ -1,33 +1,7 @@
 import React, { useState, useContext } from "react";
 import { ScrollView, View, Text, Button, StyleSheet, Modal } from "react-native";
 import { ScreenProps } from "../../constants/types";
-import { DebtHoldersContext, useAddDebtHolder } from "../../context";
-
-const items = [
-    {
-        description: "Viinaa",
-        price: 666.00,
-        currency: "EUR"
-    },
-    {
-        description: "Sipsejä",
-        price: 420.69,
-        currency: "EUR"
-    }
-]
-
-const debtHolders: any = {
-    "this-is-a-debt-holder-id": {
-        name: "Niko"
-    }
-};
-
-const debts: any = {
-    "this-is-a-debt-description": {
-        items,
-        debtHolders: ["this-is-a-debt-holder-id"]
-    }
-};
+import { DebtHoldersContext, useAddDebtHolder, DebtsContext } from "../../context";
 
 interface DebtHoldersScreenProps extends ScreenProps {
     id: string;
@@ -37,9 +11,10 @@ export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
     const [modal, setModal] = useState<any>(null);
     const [addDebtHolder] = useAddDebtHolder();
     const { state } = useContext(DebtHoldersContext);
+    const debtsState = useContext(DebtsContext).state;
 
     const renderHolderDebts: any = (key: string) => {
-        return debts[key].items.map((item: any) => <View key={item.description}>
+        return debtsState[key].items.map((item: any) => <View key={item.description}>
             <Text>{item.description}</Text>
             <Text>{item.price} {item.currency}</Text>
         </View>);
@@ -53,8 +28,8 @@ export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
                     setModal(null);
                 }}>
                 <Text>{state[id].name}</Text>
-                {Object.keys(debts).map(key => {
-                    if (debts[key].debtHolders.includes(id)) return renderHolderDebts(key);
+                {Object.keys(debtsState).map(key => {
+                    if (debtsState[key].debtHolders.includes(id)) return renderHolderDebts(key);
                 })}
                 <Button title="Close" onPress={() => setModal(null)} />
             </Modal>

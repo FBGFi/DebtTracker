@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { ScrollView, View, Text, Button, StyleSheet, Modal } from "react-native";
 import { ScreenProps } from "../../constants/types";
+import { DebtHoldersContext, useAddDebtHolder } from "../../context";
 
 const items = [
     {
@@ -34,6 +35,8 @@ interface DebtHoldersScreenProps extends ScreenProps {
 
 export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
     const [modal, setModal] = useState<any>(null);
+    const [addDebtHolder] = useAddDebtHolder();
+    const { state } = useContext(DebtHoldersContext);
 
     const renderHolderDebts: any = (key: string) => {
         return debts[key].items.map((item: any) => <View key={item.description}>
@@ -49,7 +52,7 @@ export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
                 onRequestClose={() => {
                     setModal(null);
                 }}>
-                <Text>{debtHolders[id].name}</Text>
+                <Text>{state[id].name}</Text>
                 {Object.keys(debts).map(key => {
                     if (debts[key].debtHolders.includes(id)) return renderHolderDebts(key);
                 })}
@@ -61,12 +64,13 @@ export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
         <>
             {modal}
             <ScrollView>
-                {Object.keys(debtHolders).map(key =>
-                    <View style={styles.debtHolderCard} key={key}>
-                        <Text>{debtHolders[key].name}</Text>
-                        <Button onPress={() => viewDebtHolder(key)} title="Open" />
-                    </View>
-                )}
+                {Object.keys(state).map(key => <View style={styles.debtHolderCard} key={key}>
+                    <Text>{state[key].name}</Text>
+                    <Button onPress={() => viewDebtHolder(key)} title="Open" />
+                </View>)}
+                <Button onPress={() => {
+                    addDebtHolder({ name: "Niko " + Object.keys(state).length })
+                }} title="Add Debtholder" />
             </ScrollView>
         </>
     );

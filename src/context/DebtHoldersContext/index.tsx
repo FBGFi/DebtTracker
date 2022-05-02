@@ -14,13 +14,13 @@ type TState = {
     [id: string]: TDebtHolder;
 }
 
-const initialState: TState = {
+export const debtHoldersInitialState: TState = {
     "this-is-a-debt-holder-id": {
         name: "Niko"
     }
 }
 
-function reducer(state: TState, action: TAction): TState {
+export function debtHoldersReducer(state: TState, action: TAction): TState {
     switch (action.type) {
         case 'addDebtHolder':
             state[action.value.id] = action.value.data;
@@ -31,14 +31,14 @@ function reducer(state: TState, action: TAction): TState {
     return { ...state };
 }
 
-export const DebtHoldersContext = createContext<{ state: TState, dispatch: React.Dispatch<TAction> }>({ state: initialState, dispatch: () => { } });
+export const DebtHoldersContext = createContext<{ state: TState, dispatch: React.Dispatch<TAction> }>({ state: debtHoldersInitialState, dispatch: () => { } });
 
-export const DebtHoldersProvider = (props: ReactComponentProps) => {
-    const [state, dispatch] = useReducer(reducer, initialState);
-    return <DebtHoldersContext.Provider value={{ state, dispatch }}>
-        {props.children}
-    </DebtHoldersContext.Provider>;
-}
+// export const DebtHoldersProvider = (props: ReactComponentProps) => {
+//     const [state, dispatch] = useReducer(reducer, debtHoldersInitialState);
+//     return <DebtHoldersContext.Provider value={{ state, dispatch }}>
+//         {props.children}
+//     </DebtHoldersContext.Provider>;
+// }
 
 export const useAddDebtHolder = () => {
     const { dispatch } = useContext(DebtHoldersContext);

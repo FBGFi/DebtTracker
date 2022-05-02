@@ -23,7 +23,7 @@ type TState = {
 }
 
 
-const initialState: TState = {
+export const debtsInitialState: TState = {
     "this-is-a-debt-id": {
         description: "Kaatokännit",
         items: [
@@ -42,7 +42,7 @@ const initialState: TState = {
     }
 }
 
-function reducer(state: TState, action: TAction): TState {
+export function debtsReducer(state: TState, action: TAction): TState {
     switch (action.type) {
         case 'addDebt':
             state[action.value.id] = action.value.data;
@@ -53,14 +53,7 @@ function reducer(state: TState, action: TAction): TState {
     return { ...state };
 }
 
-export const DebtsContext = createContext<{ state: TState, dispatch: React.Dispatch<TAction> }>({ state: initialState, dispatch: () => { } });
-
-export const DebtsProvider = (props: ReactComponentProps) => {
-    const [state, dispatch] = useReducer(reducer, initialState);
-    return <DebtsContext.Provider value={{ state, dispatch }}>
-        {props.children}
-    </DebtsContext.Provider>;
-}
+export const DebtsContext = createContext<{ state: TState, dispatch: React.Dispatch<TAction> }>({ state: debtsInitialState, dispatch: () => { } });
 
 export const useAddDebt = () => {
     const { dispatch } = useContext(DebtsContext);

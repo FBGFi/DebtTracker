@@ -44,7 +44,7 @@ export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
                     <Button onPress={() => viewDebtHolder(key)} title="Open" />
                 </View>)}
                 <Button onPress={() => {
-                    addDebtHolder({ name: "Niko " + Object.keys(state).length })
+                    addDebtHolder({ name: "Niko " + Object.keys(state).length, debts: {} })
                 }} title="Add Debtholder" />
             </ScrollView>
         </>

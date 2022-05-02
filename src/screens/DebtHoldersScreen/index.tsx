@@ -40,7 +40,7 @@ export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
             {modal}
             <ScrollView>
                 {Object.keys(state).map(key => <View style={styles.debtHolderCard} key={key}>
-                    <Text>{state[key].name}</Text>
+                    <Text style={styles.text}>{state[key].name}</Text>
                     <Button onPress={() => viewDebtHolder(key)} title="Open" />
                 </View>)}
                 <Button onPress={() => {
@@ -53,5 +53,9 @@ export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
 const styles = StyleSheet.create({
     debtHolderCard: {
         flexDirection: "row",
+    },
+    text: {
+        fontFamily: "Quicksand-Medium",
+        fontSize: 24
     }
 });

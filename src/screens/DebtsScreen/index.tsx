@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { ScrollView, View, Text, Button, StyleSheet, Modal } from "react-native";
 import { ScreenProps } from "../../constants/types";
+import { DebtsContext, useAddDebt } from "../../context";
 
 const items = [
     {
@@ -13,27 +14,16 @@ const items = [
         price: 420.69,
         currency: "EUR"
     }
-]
-
-const debtHolders: any = {
-    "this-is-a-debt-holder-id": {
-        name: "Niko"
-    }
-};
-
-const debts: any = {
-    "this-is-a-debt-description": {
-        items,
-        debtHolders: ["this-is-a-debt-holder-id"]
-    }
-};
-
+];
 interface DebtsScreenProps extends ScreenProps {
 
 }
 
 export const DebtsScreen = (props: DebtsScreenProps) => {
     const [modal, setModal] = useState<any>(null);
+    const { state } = useContext(DebtsContext);
+    const [addDebt] = useAddDebt();
+
     const viewDebt = (key: string) => {
         setModal(
             <Modal
@@ -41,7 +31,7 @@ export const DebtsScreen = (props: DebtsScreenProps) => {
                 onRequestClose={() => {
                     setModal(null);
                 }}>
-                {debts[key].items.map((item: any) => <View key={item.description}>
+                {state[key].items.map((item: any) => <View key={item.description}>
                     <Text>{item.description}</Text>
                     <Text>{item.price} {item.currency}</Text>
                 </View>)}
@@ -54,12 +44,19 @@ export const DebtsScreen = (props: DebtsScreenProps) => {
         <>
             {modal}
             <ScrollView>
-                {Object.keys(debts).map(key =>
+                {Object.keys(state).map(key =>
                     <View style={styles.debtCard} key={key}>
                         <Text>{key}</Text>
                         <Button onPress={() => viewDebt(key)} title="Open" />
                     </View>
                 )}
+                <Button onPress={() => {
+                    addDebt({
+                        description: "Kaatokännit v" + Object.keys(state).length,
+                        items,
+                        debtHolders: ["this-is-a-debt-holder-id"]
+                    })
+                }} title="Add Debt" />
             </ScrollView>
         </>
     );

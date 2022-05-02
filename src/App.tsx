@@ -8,6 +8,7 @@ import SplashScreen from 'react-native-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeScreen, DebtHoldersScreen, DebtsScreen } from './screens';
+import { StateProvider } from "./context";
 
 const items = [
   {
@@ -41,7 +42,6 @@ const App: React.FunctionComponent = () => {
 
   if (!appLoaded) SplashScreen.show();
 
-  // TODO load persistent storage
   const prepareApp = () => {
     setTimeout(() => {
       SplashScreen.hide();
@@ -49,18 +49,16 @@ const App: React.FunctionComponent = () => {
     }, 1000);
   }
 
-  useEffect(() => {
-    prepareApp();
-  }, []);
-
   return (
-    <NavigationContainer>
-      <Tab.Navigator initialRouteName='Home'>
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Debts" component={DebtsScreen} />
-        <Tab.Screen name="Debt Holders" component={DebtHoldersScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <StateProvider onStorageLoad={prepareApp}>
+      <NavigationContainer>
+        <Tab.Navigator initialRouteName='Home'>
+          <Tab.Screen name="Home" component={HomeScreen} />
+          <Tab.Screen name="Debts" component={DebtsScreen} />
+          <Tab.Screen name="Debt Holders" component={DebtHoldersScreen} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </StateProvider>
   );
 };
 

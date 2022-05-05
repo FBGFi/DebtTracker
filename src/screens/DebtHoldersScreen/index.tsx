@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { ScrollView, View, Text, Button, StyleSheet, Modal } from "react-native";
 import { ScreenProps } from "../../constants/types";
 import { DebtHoldersContext, useAddDebtHolder, DebtsContext } from "../../context";
+import { DebtHolderCard } from "./DebtHolderCard";
 
 interface DebtHoldersScreenProps extends ScreenProps {
     id: string;
@@ -39,14 +40,11 @@ export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
         <>
             {modal}
             <ScrollView>
-                {Object.keys(state).map(key => <View style={styles.debtHolderCard} key={key}>
-                    <Text style={styles.text}>{state[key].name}</Text>
-                    <Button onPress={() => viewDebtHolder(key)} title="Open" />
-                </View>)}
-                <Button onPress={() => {
-                    addDebtHolder({ name: "Niko " + Object.keys(state).length, debts: {} })
-                }} title="Add Debtholder" />
+                {Object.keys(state).map(key => <DebtHolderCard key={key} debtHolderId={key} viewDebtHolder={() => viewDebtHolder(key)} />)}
             </ScrollView>
+            <Button onPress={() => {
+                addDebtHolder({ name: "Niko " + Object.keys(state).length, debts: {} })
+            }} title="Add Debtholder" />
         </>
     );
 }

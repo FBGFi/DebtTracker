@@ -9,11 +9,11 @@ type TAction = {
 type TDebtItem = {
     description: string;
     price: number;
-    currency: string;
 }
 
 type TDebt = {
     description: string;
+    currency: string;
     items: TDebtItem[];
     debtHolders: string[];
 }
@@ -26,16 +26,15 @@ type TState = {
 export const debtsInitialState: TState = {
     "this-is-a-debt-id": {
         description: "Kaatokännit",
+        currency: "EUR",
         items: [
             {
                 description: "Viinaa",
-                price: 666.00,
-                currency: "EUR"
+                price: 666.00
             },
             {
                 description: "Sipsejä",
-                price: 420.69,
-                currency: "EUR"
+                price: 420.69
             }
         ],
         debtHolders: ["this-is-a-debt-holder-id"]

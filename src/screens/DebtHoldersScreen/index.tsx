@@ -3,6 +3,7 @@ import { ScrollView, View, Text, Button, StyleSheet, Modal } from "react-native"
 import { ScreenProps } from "../../constants/types";
 import { DebtHoldersContext, useAddDebtHolder, DebtsContext } from "../../context";
 import { DebtHolderCard } from "./DebtHolderCard";
+import { AddNewButton } from "../../components";
 
 interface DebtHoldersScreenProps extends ScreenProps {
     id: string;
@@ -42,9 +43,9 @@ export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
             <ScrollView>
                 {Object.keys(state).map(key => <DebtHolderCard key={key} debtHolderId={key} viewDebtHolder={() => viewDebtHolder(key)} />)}
             </ScrollView>
-            <Button onPress={() => {
+            <AddNewButton onPress={() => {
                 addDebtHolder({ name: "Niko " + Object.keys(state).length, debts: {} })
-            }} title="Add Debtholder" />
+            }} />
         </>
     );
 }

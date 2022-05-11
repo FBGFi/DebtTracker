@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { StyleSheet, Text } from "react-native";
 import { TouchableCard } from "../../components";
-import { commonConstants } from '../../constants/common';
 import { DebtHoldersContext } from '../../context';
+import { Colors } from "../../styles/colors";
 
 interface DebtHolderCardProps {
     debtHolderId: string;
@@ -21,15 +21,11 @@ export const DebtHolderCard = (props: DebtHolderCardProps) => {
 
 const styles = StyleSheet.create({
     debtHolderCard: {
-        flexDirection: "row",
-        padding: 10,
-        backgroundColor: "#95fc9c",
-        marginBottom: commonConstants.gapAmount,
-        justifyContent: "space-between",
     },
     title: {
         fontSize: 20,
         fontFamily: "Quicksand-Medium",
-        flex: 2
+        flex: 2,
+        color: Colors.lightText,
     },
 });

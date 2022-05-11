@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
 import { TouchableOpacity, View, StyleSheet, StyleProp, ViewStyle } from "react-native";
+import { commonConstants } from "../../constants/common";
 import { ReactComponentProps } from "../../constants/types";
+import { Colors } from "../../styles/colors";
 
 interface TouchableCardProps extends ReactComponentProps {
     onPress: () => void;
@@ -30,7 +32,14 @@ export const TouchableCard = (props: TouchableCardProps) => {
 
 const styles = StyleSheet.create({
     wrapper: {
-
+        backgroundColor: Colors.darkestBlue,
+        borderWidth: 3,
+        borderColor: Colors.orange,
+        borderRadius: 10,
+        padding: 15,
+        flexDirection: "row",
+        margin: commonConstants.gapAmount,
+        justifyContent: "space-between",
     },
     wrapperDisabled: {
 

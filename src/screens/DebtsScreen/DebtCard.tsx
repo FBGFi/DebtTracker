@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, StyleProp } from "react-native";
 import { TouchableCard } from "../../components";
-import { commonConstants } from '../../constants/common';
 import { DebtsContext, DebtHoldersContext } from '../../context';
+import { Colors } from "../../styles/colors";
 
 interface DebtCardProps {
     debtId: string;
@@ -15,44 +15,54 @@ export const DebtCard = (props: DebtCardProps) => {
     if (!state[props.debtId]) return null;
 
     const countTotal = () => state[props.debtId].items.reduce((prevSum, item) => prevSum + item.price, 0).toFixed(2);
-    const combineStyles = () => {
+
+    const isPaid = () => {
         for (let id of state[props.debtId].debtHolders) {
             if (debtHoldersState[id].debts[props.debtId] !== true) {
-                return [styles.debtCard, styles.unPaidDebt];
+                return false;
             }
         }
-        return [styles.debtCard, styles.paidDebt];
+        return true;
     }
+
+    const combineStyles = (baseStyle: StyleProp<any>, paidStyle: StyleProp<any>, unPaidStyle: StyleProp<any>) => {
+        return isPaid() ? [baseStyle, paidStyle] : [baseStyle, unPaidStyle];
+    }
+
     return (
-        <TouchableCard onPress={() => props.viewDebt(props.debtId)} style={combineStyles()}>
+        <TouchableCard onPress={() => props.viewDebt(props.debtId)} style={combineStyles(styles.debtCard, styles.paidDebt, styles.unPaidDebt)}>
             <Text style={styles.title}>{state[props.debtId].description}</Text>
-            <Text style={styles.total}>{countTotal()} {state[props.debtId].currency}</Text>
+            <Text style={combineStyles(styles.total, styles.totalPaid, styles.totalUnPaid)}>{countTotal()} {state[props.debtId].currency}</Text>
         </TouchableCard>
     );
 }
 
 const styles = StyleSheet.create({
     debtCard: {
-        flexDirection: "row",
-        padding: 10,
-        marginBottom: commonConstants.gapAmount,
-        justifyContent: "space-between",
     },
     paidDebt: {
-        backgroundColor: "#95fc9c",
+        borderColor: Colors.paidColor,
     },
     unPaidDebt: {
-        backgroundColor: "#fa8c84"
+        borderColor: Colors.unPaidColor,
     },
     title: {
         fontSize: 20,
         fontFamily: "Quicksand-Medium",
-        flex: 2
+        flex: 2,
+        color: Colors.lightText,
     },
     total: {
         fontSize: 20,
         fontFamily: "Quicksand-Bold",
         flex: 1,
-        textAlign: "right"
+        textAlign: "right",
+        color: Colors.lightText,
+    },
+    totalPaid: {
+        color: Colors.paidColor,
+    },
+    totalUnPaid: {
+        color: Colors.unPaidColor,
     },
 });

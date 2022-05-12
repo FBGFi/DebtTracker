@@ -1,8 +1,10 @@
 import React, { useState, useContext } from "react";
-import { ScrollView, View, Text, Button, StyleSheet, Modal } from "react-native";
+import { ScrollView, View, Text, Button, StyleSheet } from "react-native";
 import { ScreenProps } from "../../constants/types";
-import { DebtHoldersContext, useAddDebtHolder, DebtsContext } from "../../context";
+import { DebtHoldersContext, useAddDebtHolder, DebtsContext, useSwitchDebtPaidState } from "../../context";
 import { DebtHolderCard } from "./DebtHolderCard";
+import { AddNewButton, CustomModal } from "../../components";
+import { DebtCard } from "../DebtsScreen/DebtCard";
 
 interface DebtHoldersScreenProps extends ScreenProps {
     id: string;
@@ -11,29 +13,36 @@ interface DebtHoldersScreenProps extends ScreenProps {
 export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
     const [modal, setModal] = useState<any>(null);
     const [addDebtHolder] = useAddDebtHolder();
+    const [switchDebtPaidState] = useSwitchDebtPaidState();
     const { state } = useContext(DebtHoldersContext);
     const debtsState = useContext(DebtsContext).state;
 
-    const renderHolderDebts: any = (key: string) => {
-        return debtsState[key].items.map((item: any) => <View key={item.description}>
-            <Text>{item.description}</Text>
-            <Text>{item.price} {item.currency}</Text>
-        </View>);
-    }
+    // const renderHolderDebts: any = (key: string) => {
+    //     return debtsState[key].items.map((item: any) => <View key={item.description}>
+    //         <Text>{item.description}</Text>
+    //         <Text>{item.price} {item.currency}</Text>
+    //     </View>);
+    // }
 
     const viewDebtHolder = (id: string) => {
         setModal(
-            <Modal
-                animationType="slide"
-                onRequestClose={() => {
+            <CustomModal
+                setModal={() => {
                     setModal(null);
-                }}>
-                <Text>{state[id].name}</Text>
-                {Object.keys(debtsState).map(key => {
-                    if (debtsState[key].debtHolders.includes(id)) return renderHolderDebts(key);
+                }}
+                title={state[id].name}>
+                {Object.keys(state[id].debts).map(key => {
+                    // TODO calculate the amount of debt per person
+                    if (debtsState[key].debtHolders.includes(id)) {
+                        return (<DebtCard
+                            key={key}
+                            debtId={key}
+                            viewDebt={() => {
+                                switchDebtPaidState(id, key);
+                            }} />);
+                    }
                 })}
-                <Button title="Close" onPress={() => setModal(null)} />
-            </Modal>
+            </CustomModal>
         );
     }
     return (
@@ -42,9 +51,9 @@ export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
             <ScrollView>
                 {Object.keys(state).map(key => <DebtHolderCard key={key} debtHolderId={key} viewDebtHolder={() => viewDebtHolder(key)} />)}
             </ScrollView>
-            <Button onPress={() => {
+            <AddNewButton onPress={() => {
                 addDebtHolder({ name: "Niko " + Object.keys(state).length, debts: {} })
-            }} title="Add Debtholder" />
+            }} />
         </>
     );
 }

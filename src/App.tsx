@@ -1,40 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  View,
   StyleSheet,
-  Text,
 } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { HomeScreen, DebtHoldersScreen, DebtsScreen } from './screens';
+import { DebtHoldersScreen, DebtsScreen } from './screens';
 import { StateProvider } from "./context";
-
-const items = [
-  {
-    description: "Viinaa",
-    price: 666.00,
-    currency: "EUR"
-  },
-  {
-    description: "Sipsejä",
-    price: 420.69,
-    currency: "EUR"
-  }
-]
-
-const debtHolders: any = {
-  "this-is-a-debt-holder-id": {
-    name: "Niko"
-  }
-};
-
-const debts: any = {
-  "this-is-a-debt-description": {
-    items,
-    debtHolders: ["this-is-a-debt-holder-id"]
-  }
-};
+import { BottomNavigation } from "./components";
+import { AppTheme } from "./styles/themes";
 
 const Tab = createBottomTabNavigator();
 const App: React.FunctionComponent = () => {
@@ -51,14 +25,13 @@ const App: React.FunctionComponent = () => {
 
   return (
     <StateProvider onStorageLoad={prepareApp}>
-      <NavigationContainer>
-        <Tab.Navigator initialRouteName='Home'>
-          <Tab.Screen name="Home" component={HomeScreen} />
+      <NavigationContainer theme={AppTheme}>
+        <Tab.Navigator tabBar={props => <BottomNavigation {...props} />} initialRouteName='Debts'>
           <Tab.Screen name="Debts" component={DebtsScreen} />
           <Tab.Screen name="Debt Holders" component={DebtHoldersScreen} />
         </Tab.Navigator>
       </NavigationContainer>
-    </StateProvider>
+    </StateProvider >
   );
 };
 

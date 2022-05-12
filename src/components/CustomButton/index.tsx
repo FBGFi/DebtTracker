@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { TouchableOpacity, Text, View, ViewStyle, StyleProp, StyleSheet, GestureResponderEvent } from 'react-native';
 import { ReactComponentProps } from '../../constants/types';
+import { Colors } from "../../styles/colors";
 
 interface CustomButtonProps extends ReactComponentProps {
     title?: string;
@@ -25,6 +26,7 @@ export const CustomButton = (props: CustomButtonProps) => {
                 {props.title ? <Text style={{
                     fontSize: 20,
                     fontFamily: "Quicksand-SemiBold",
+                    color: Colors.lightText,
                 }}>{props.title}</Text> : props.children}
             </View>
         </TouchableOpacity>
@@ -34,7 +36,9 @@ export const CustomButton = (props: CustomButtonProps) => {
 const styles = StyleSheet.create({
     wrapper: {
         padding: 10,
-        backgroundColor: "turquoise",
+        backgroundColor: Colors.darkestBlue,
+        borderWidth: 3,
+        borderColor: Colors.orange,
         alignItems: "center",
         justifyContent: "center"
     },

@@ -1,5 +1,6 @@
 import React, { createContext, useReducer, useContext } from 'react';
 import { ReactComponentProps } from "../../constants/types";
+import { useAddDebtToHolder } from "../index";
 
 type TAction = {
     type: string;
@@ -56,14 +57,19 @@ export const DebtsContext = createContext<{ state: TState, dispatch: React.Dispa
 
 export const useAddDebt = () => {
     const { dispatch } = useContext(DebtsContext);
+    const [addDebtToHolder] = useAddDebtToHolder();
 
     const addDebt = (debt: TDebt) => {
+        const debtId = Date.now().toString();
         dispatch({
             type: 'addDebt', value: {
-                id: Date.now().toString(),
+                id: debtId,
                 data: debt
             }
         });
+        for(const debtHolder of debt.debtHolders){
+            addDebtToHolder(debtHolder, debtId);
+        }
     };
 
     return [addDebt];

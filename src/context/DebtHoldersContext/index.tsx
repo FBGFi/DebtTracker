@@ -31,6 +31,12 @@ export function debtHoldersReducer(state: TState, action: TAction): TState {
         case 'addDebtHolder':
             state[action.value.id] = action.value.data;
             break;
+        case 'switchDebtPaidState':
+            state[action.value.debtHolderId].debts[action.value.debtId] = !state[action.value.debtHolderId].debts[action.value.debtId]
+            break;
+        case 'addDebtToHolder':
+            state[action.value.debtHolderId].debts[action.value.debtId] = false;
+            break;
         default:
             break;
     }
@@ -52,4 +58,36 @@ export const useAddDebtHolder = () => {
     };
 
     return [addDebtHolder];
+}
+
+export const useSwitchDebtPaidState = () => {
+    const { state, dispatch } = useContext(DebtHoldersContext);
+
+    const switchDebtPaidState = (debtHolderId: string, debtId: string) => {
+        if (!state[debtHolderId]) return;
+        dispatch({
+            type: 'switchDebtPaidState', value: {
+                debtHolderId,
+                debtId
+            }
+        });
+    };
+
+    return [switchDebtPaidState];
+}
+
+export const useAddDebtToHolder = () => {
+    const { state, dispatch } = useContext(DebtHoldersContext);
+
+    const addDebtToHolder = (debtHolderId: string, debtId: string) => {
+        if (!state[debtHolderId]) return;
+        dispatch({
+            type: 'addDebtToHolder', value: {
+                debtHolderId,
+                debtId
+            }
+        });
+    }
+
+    return [addDebtToHolder];
 }

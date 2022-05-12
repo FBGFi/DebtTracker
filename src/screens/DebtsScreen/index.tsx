@@ -51,22 +51,27 @@ export const DebtsScreen = (props: DebtsScreenProps) => {
     const { state } = useContext(DebtsContext);
     const [addDebt] = useAddDebt();
 
+    const totalAmount = (key: string) => {
+        return (
+            <View style={{ flexDirection: "row", padding: 5 }}>
+                <Text style={{ color: Colors.orange, fontSize: 20, flex: 1 }}>Total: </Text>
+                <Text style={{
+                    color: Colors.orange,
+                    fontSize: 20,
+                    flex: 1,
+                    textAlign: "right"
+                }}>{state[key].items.reduce((a, b) => a + b.price, 0).toFixed(2)} {state[key].currency}</Text>
+            </View>
+        );
+    }
+
     const viewDebt = (key: string) => {
         setModal(
-            <CustomModal setModal={setModal}>
-                <View style={{ backgroundColor: Colors.darkestBlue }}>
-                    <Text style={{
-                        color: Colors.orange,
-                        fontSize: 20,
-                        textAlign: "center",
-                        padding: 10,
-                    }}>{state[key].description}</Text>
-                </View>
+            <CustomModal
+                setModal={setModal}
+                outSideContent={totalAmount(key)}
+                title={state[key].description}>
                 {state[key].items.map((item: any) => <DebtItem key={item.description} item={item} debtId={key} />)}
-                <View style={{ flexDirection: "row", padding: 5 }}>
-                    <Text style={{ color: Colors.orange, fontSize: 20, flex: 1 }}>Total: </Text>
-                    <Text style={{ color: Colors.orange, fontSize: 20, flex: 1, textAlign: "right" }}>{state[key].items.reduce((a, b) => a + b.price, 0)} {state[key].currency}</Text>
-                </View>
             </CustomModal>
         );
     }

@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
-import { ScrollView, View, Text, StyleSheet } from "react-native";
+import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { AddNewButton, CustomModal } from "../../components";
 import { ScreenProps } from "../../constants/types";
-import { DebtsContext, useAddDebt } from "../../context";
+import { DebtsContext, useAddDebt, useRemoveItemFromDebt } from "../../context";
 import { DebtCard } from "./DebtCard";
 import { Colors } from "../../styles/colors";
 
@@ -20,29 +20,32 @@ interface DebtsScreenProps extends ScreenProps {
 
 }
 
-const DebtItem = ({ item, debtId }: { item: { description: string, price: number }, debtId: string }) => {
+const DebtItem = ({ item, debtId, index }: { item: { description: string, price: number }, debtId: string, index: number }) => {
     const { state } = useContext(DebtsContext);
+    const [removeItemFromDebt] = useRemoveItemFromDebt();
 
     return (
-        <View style={{
-            flexDirection: "row",
-            margin: 5,
-            paddingBottom: 3,
-            borderBottomWidth: 1,
-            borderColor: Colors.orange,
-        }}>
-            <Text style={{
-                fontSize: 20,
-                color: Colors.lightText,
-                flex: 2,
-            }}>{item.description}</Text>
-            <Text style={{
-                fontSize: 20,
-                color: Colors.lightText,
-                flex: 1,
-                textAlign: "right"
-            }}>{item.price.toFixed(2)} {state[debtId]?.currency}</Text>
-        </View>
+        <TouchableOpacity onPress={() => removeItemFromDebt(debtId, index)}>
+            <View style={{
+                flexDirection: "row",
+                margin: 5,
+                paddingBottom: 3,
+                borderBottomWidth: 1,
+                borderColor: Colors.orange,
+            }}>
+                <Text style={{
+                    fontSize: 20,
+                    color: Colors.lightText,
+                    flex: 2,
+                }}>{item.description}</Text>
+                <Text style={{
+                    fontSize: 20,
+                    color: Colors.lightText,
+                    flex: 1,
+                    textAlign: "right"
+                }}>{item.price.toFixed(2)} {state[debtId]?.currency}</Text>
+            </View>
+        </TouchableOpacity>
     );
 }
 
@@ -65,13 +68,14 @@ export const DebtsScreen = (props: DebtsScreenProps) => {
         );
     }
 
-    const viewDebt = (key: string) => {
+    const viewDebt = (debtId: string) => {
+        // return;
         setModal(
             <CustomModal
                 setModal={setModal}
-                outSideContent={totalAmount(key)}
-                title={state[key].description}>
-                {state[key].items.map((item: any) => <DebtItem key={item.description} item={item} debtId={key} />)}
+                outSideContent={totalAmount(debtId)}
+                title={state[debtId].description}>
+                {state[debtId].items.map((item: any, index: number) => <DebtItem key={item.description + index} item={item} debtId={debtId} index={index} />)}
             </CustomModal>
         );
     }

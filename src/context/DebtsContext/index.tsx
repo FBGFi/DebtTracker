@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import { useAddDebtToHolder } from "../index";
+import { useAddDebtToHolder, DebtHoldersContext, useRemoveDebtFromHolder } from "../index";
 
 type TAction = {
     type: string;
@@ -52,11 +52,26 @@ export function debtsReducer(state: TState, action: TAction): TState {
         case 'updateDebtDescription':
             state[action.value.id].description = action.value.description;
             break;
+        case 'updateDebtItemPrice':
+            state[action.value.id].items[action.value.itemIndex].price = action.value.price;
+            break;
+        case 'updateDebtItemDescription':
+            state[action.value.id].items[action.value.itemIndex].description = action.value.description;
+            break;
         case 'addItemToDebt':
             state[action.value.id].items.push(action.value.debtItem);
             break;
         case 'removeItemFromDebt':
             state[action.value.id].items.splice(action.value.index, 1);
+            break;
+        case 'addDebtHolderToDebt':
+            state[action.value.id].debtHolders.push(action.value.debtHolderId);
+            break;
+        case 'removeDebtHolderFromDebt':
+            state[action.value.id].debtHolders.splice(
+                state[action.value.id].debtHolders.findIndex(id => id === action.value.debtHolderId),
+                1
+            );
             break;
         default:
             break;
@@ -78,7 +93,7 @@ export const useAddDebt = () => {
                 data: debt
             }
         });
-        for(const debtHolder of debt.debtHolders){
+        for (const debtHolder of debt.debtHolders) {
             addDebtToHolder(debtHolder, debtId);
         }
     };
@@ -105,7 +120,7 @@ export const useUpdateDebtDescription = () => {
     const { state, dispatch } = useContext(DebtsContext);
 
     const updateDebtDescription = (debtId: string, description: string) => {
-        if(!state[debtId]) return;
+        if (!state[debtId]) return;
         dispatch({
             type: 'updateDebtDescription', value: {
                 id: debtId,
@@ -117,11 +132,44 @@ export const useUpdateDebtDescription = () => {
     return [updateDebtDescription];
 }
 
+export const useUpdateDebtItemPrice = () => {
+    const { state, dispatch } = useContext(DebtsContext);
+
+    const updateDebtItemPrice = (debtId: string, itemIndex: number, price: number) => {
+        if (!state[debtId]) return;
+        dispatch({
+            type: 'updateDebtItemPrice', value: {
+                id: debtId,
+                itemIndex,
+                price
+            }
+        })
+    }
+
+    return [updateDebtItemPrice];
+}
+export const useUpdateDebtItemDescription = () => {
+    const { state, dispatch } = useContext(DebtsContext);
+
+    const updateDebtItemDescription = (debtId: string, itemIndex: number, description: string) => {
+        if (!state[debtId]) return;
+        dispatch({
+            type: 'updateDebtItemDescription', value: {
+                id: debtId,
+                itemIndex,
+                description
+            }
+        })
+    }
+
+    return [updateDebtItemDescription];
+}
+
 export const useAddItemToDebt = () => {
     const { state, dispatch } = useContext(DebtsContext);
 
     const addItemToDebt = (debtId: string, debtItem: TDebtItem) => {
-        if(!state[debtId]) return;
+        if (!state[debtId]) return;
         dispatch({
             type: 'addItemToDebt', value: {
                 id: debtId,
@@ -133,12 +181,11 @@ export const useAddItemToDebt = () => {
     return [addItemToDebt];
 }
 
-// TODO does not trigger re render
 export const useRemoveItemFromDebt = () => {
     const { state, dispatch } = useContext(DebtsContext);
 
     const removeItemFromDebt = (debtId: string, index: number) => {
-        if(!state[debtId] || state[debtId].items.length < index + 1) return;
+        if (!state[debtId] || state[debtId].items.length < index + 1) return;
         dispatch({
             type: 'removeItemFromDebt', value: {
                 id: debtId,
@@ -148,4 +195,47 @@ export const useRemoveItemFromDebt = () => {
     }
 
     return [removeItemFromDebt];
+}
+
+// TODO clean here and debtHoldersScreen
+export const useAddDebtHolderToDebt = () => {
+    const { state, dispatch } = useContext(DebtsContext);
+    const debtHoldersState = useContext(DebtHoldersContext).state;
+    const [addDebtToHolder] = useAddDebtToHolder();
+
+    const addDebtHolderToDebt = (debtId: string, debtHolderId: string) => {
+        if (!debtHoldersState[debtHolderId] || !state[debtId] || state[debtId].debtHolders.includes(debtHolderId)) {
+            return;
+        }
+        dispatch({
+            type: 'addDebtHolderToDebt', value: {
+                id: debtId,
+                debtHolderId
+            }
+        });
+        addDebtToHolder(debtHolderId, debtId);
+    }
+
+    return [addDebtHolderToDebt];
+}
+
+export const useRemoveDebtHolderFromDebt = () => {
+    const { state, dispatch } = useContext(DebtsContext);
+    const debtHoldersState = useContext(DebtHoldersContext).state;
+    const [removeDebtFromHolder] = useRemoveDebtFromHolder();
+
+    const removeDebtHolderFromDebt = (debtId: string, debtHolderId: string) => {
+        if (!debtHoldersState[debtHolderId] || !state[debtId] || !state[debtId].debtHolders.includes(debtHolderId)) {
+            return;
+        }
+        dispatch({
+            type: 'removeDebtHolderFromDebt', value: {
+                id: debtId,
+                debtHolderId
+            }
+        });
+        removeDebtFromHolder(debtHolderId, debtId);
+    }
+
+    return [removeDebtHolderFromDebt];
 }

@@ -37,6 +37,9 @@ export function debtHoldersReducer(state: TState, action: TAction): TState {
         case 'addDebtToHolder':
             state[action.value.debtHolderId].debts[action.value.debtId] = false;
             break;
+        case 'removeDebtFromHolder':
+            delete state[action.value.debtHolderId].debts[action.value.debtId];
+            break;
         default:
             break;
     }
@@ -49,12 +52,15 @@ export const useAddDebtHolder = () => {
     const { dispatch } = useContext(DebtHoldersContext);
 
     const addDebtHolder = (debtHolder: TDebtHolder) => {
+        // TODO remove return value in prod
+        const id =  Date.now().toString();
         dispatch({
             type: 'addDebtHolder', value: {
-                id: Date.now().toString(),
+                id: id,
                 data: debtHolder
             }
         });
+        return id;
     };
 
     return [addDebtHolder];
@@ -90,4 +96,20 @@ export const useAddDebtToHolder = () => {
     }
 
     return [addDebtToHolder];
+}
+
+export const useRemoveDebtFromHolder = () => {
+    const { state, dispatch } = useContext(DebtHoldersContext);
+
+    const removeDebtFromHolder = (debtHolderId: string, debtId: string) => {
+        if (!state[debtHolderId]) return;
+        dispatch({
+            type: 'removeDebtFromHolder', value: {
+                debtHolderId,
+                debtId
+            }
+        });
+    }
+
+    return [removeDebtFromHolder];
 }

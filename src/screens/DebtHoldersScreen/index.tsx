@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { ScrollView, View, Text, Button, StyleSheet } from "react-native";
 import { ScreenProps } from "../../constants/types";
-import { DebtHoldersContext, useAddDebtHolder, DebtsContext, useSwitchDebtPaidState } from "../../context";
+import { DebtHoldersContext, useAddDebtHolder, DebtsContext, useSwitchDebtPaidState, useAddDebtHolderToDebt } from "../../context";
 import { DebtHolderCard } from "./DebtHolderCard";
 import { AddNewButton, CustomModal } from "../../components";
 import { DebtCard } from "../DebtsScreen/DebtCard";
@@ -14,6 +14,7 @@ export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
     const [modal, setModal] = useState<any>(null);
     const [addDebtHolder] = useAddDebtHolder();
     const [switchDebtPaidState] = useSwitchDebtPaidState();
+    const [addDebtHolderToDebt] = useAddDebtHolderToDebt();
     const { state } = useContext(DebtHoldersContext);
     const debtsState = useContext(DebtsContext).state;
 
@@ -52,7 +53,8 @@ export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
                 {Object.keys(state).map(key => <DebtHolderCard key={key} debtHolderId={key} viewDebtHolder={() => viewDebtHolder(key)} />)}
             </ScrollView>
             <AddNewButton onPress={() => {
-                addDebtHolder({ name: "Niko " + Object.keys(state).length, debts: {} })
+                const dhId = addDebtHolder({ name: "Niko " + Object.keys(state).length, debts: {} });
+                addDebtHolderToDebt("this-is-a-debt-id", dhId);
             }} />
         </>
     );

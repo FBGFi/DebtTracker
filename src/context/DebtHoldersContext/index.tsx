@@ -6,18 +6,18 @@ type TAction = {
     value: any;
 }
 
-type TDebtHolder = {
+export type TDebtHolder = {
     name: string;
     debts: {
         [id: string]: boolean;
     }
 }
 
-type TState = {
+export type TDebtHoldersState = {
     [id: string]: TDebtHolder;
 }
 
-export const debtHoldersInitialState: TState = {
+export const debtHoldersInitialState: TDebtHoldersState = {
     "this-is-a-debt-holder-id": {
         name: "Niko",
         debts: {
@@ -26,10 +26,16 @@ export const debtHoldersInitialState: TState = {
     }
 }
 
-export function debtHoldersReducer(state: TState, action: TAction): TState {
+export function debtHoldersReducer(state: TDebtHoldersState, action: TAction): TDebtHoldersState {
     switch (action.type) {
         case 'addDebtHolder':
             state[action.value.id] = action.value.data;
+            break;
+        case 'removeDebtHolder':
+            delete state[action.value.id];
+            break;
+        case 'updateDebtHolderName':
+            state[action.value.id].name = action.value.name;
             break;
         case 'switchDebtPaidState':
             state[action.value.debtHolderId].debts[action.value.debtId] = !state[action.value.debtHolderId].debts[action.value.debtId]
@@ -46,24 +52,50 @@ export function debtHoldersReducer(state: TState, action: TAction): TState {
     return { ...state };
 }
 
-export const DebtHoldersContext = createContext<{ state: TState, dispatch: React.Dispatch<TAction> }>({ state: debtHoldersInitialState, dispatch: () => { } });
+export const DebtHoldersContext = createContext<{ state: TDebtHoldersState, dispatch: React.Dispatch<TAction> }>({ state: debtHoldersInitialState, dispatch: () => { } });
 
 export const useAddDebtHolder = () => {
     const { dispatch } = useContext(DebtHoldersContext);
 
     const addDebtHolder = (debtHolder: TDebtHolder) => {
-        // TODO remove return value in prod
-        const id =  Date.now().toString();
         dispatch({
             type: 'addDebtHolder', value: {
-                id: id,
+                id: Date.now().toString(),
                 data: debtHolder
             }
         });
-        return id;
     };
 
     return [addDebtHolder];
+}
+
+export const useRemoveDebtHolder = () => {
+    const { dispatch } = useContext(DebtHoldersContext);
+
+    const removeDebtHolder = (debtHolderId: string) => {
+        dispatch({
+            type: 'removeDebtHolder', value: {
+                id: debtHolderId
+            }
+        });
+    };
+
+    return [removeDebtHolder];
+}
+
+export const useUpdateDebtHolderName = () => {
+    const { dispatch } = useContext(DebtHoldersContext);
+
+    const updateDebtHolderName = (debtHolderId: string, name: string) => {
+        dispatch({
+            type: 'updateDebtHolderName', value: {
+                id: debtHolderId,
+                name
+            }
+        });
+    };
+
+    return [updateDebtHolderName];
 }
 
 export const useSwitchDebtPaidState = () => {

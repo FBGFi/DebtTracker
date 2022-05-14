@@ -50,12 +50,11 @@ export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
         <>
             {modal}
             <ScrollView>
-                {Object.keys(state).map(key => <DebtHolderCard key={key} debtHolderId={key} viewDebtHolder={() => viewDebtHolder(key)} />)}
+                <View style={{paddingBottom: 70}}>
+                    {Object.keys(state).map(key => <DebtHolderCard key={key} debtHolderId={key} viewDebtHolder={() => viewDebtHolder(key)} />)}
+                </View>
             </ScrollView>
-            <AddNewButton onPress={() => {
-                const dhId = addDebtHolder({ name: "Niko " + Object.keys(state).length, debts: {} });
-                addDebtHolderToDebt("this-is-a-debt-id", dhId);
-            }} />
+            <AddNewButton onPress={() => addDebtHolder({ name: "Niko " + Object.keys(state).length, debts: {} })} />
         </>
     );
 }

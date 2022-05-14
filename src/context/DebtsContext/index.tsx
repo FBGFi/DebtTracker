@@ -11,19 +11,19 @@ type TDebtItem = {
     price: number;
 }
 
-type TDebt = {
+export type TDebt = {
     description: string;
     currency: string;
     items: TDebtItem[];
     debtHolders: string[];
 }
 
-type TState = {
+export type TDebtsState = {
     [id: string]: TDebt;
 }
 
 
-export const debtsInitialState: TState = {
+export const debtsInitialState: TDebtsState = {
     "this-is-a-debt-id": {
         description: "Kaatokännit",
         currency: "EUR",
@@ -41,7 +41,7 @@ export const debtsInitialState: TState = {
     }
 }
 
-export function debtsReducer(state: TState, action: TAction): TState {
+export function debtsReducer(state: TDebtsState, action: TAction): TDebtsState {
     switch (action.type) {
         case 'addDebt':
             state[action.value.id] = action.value.data;
@@ -79,7 +79,7 @@ export function debtsReducer(state: TState, action: TAction): TState {
     return { ...state };
 }
 
-export const DebtsContext = createContext<{ state: TState, dispatch: React.Dispatch<TAction> }>({ state: debtsInitialState, dispatch: () => { } });
+export const DebtsContext = createContext<{ state: TDebtsState, dispatch: React.Dispatch<TAction> }>({ state: debtsInitialState, dispatch: () => { } });
 
 export const useAddDebt = () => {
     const { dispatch } = useContext(DebtsContext);
@@ -103,14 +103,20 @@ export const useAddDebt = () => {
 
 export const useRemoveDebt = () => {
     const { dispatch } = useContext(DebtsContext);
-    // TODO call debtholder hook to remove debt
+    const debtHoldersState = useContext(DebtHoldersContext).state;
+    const [removeDebtFromHolder] = useRemoveDebtFromHolder();
 
     const removeDebt = (debtId: string) => {
         dispatch({
             type: 'removeDebt', value: {
                 id: debtId,
             }
-        })
+        });
+        Object.keys(debtHoldersState).map(debtHolderId => {
+            if(debtHoldersState[debtHolderId].debts[debtId] !== undefined) {
+                removeDebtFromHolder(debtHolderId, debtId);
+            }
+        });
     }
 
     return [removeDebt];
@@ -197,7 +203,6 @@ export const useRemoveItemFromDebt = () => {
     return [removeItemFromDebt];
 }
 
-// TODO clean here and debtHoldersScreen
 export const useAddDebtHolderToDebt = () => {
     const { state, dispatch } = useContext(DebtsContext);
     const debtHoldersState = useContext(DebtHoldersContext).state;

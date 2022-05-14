@@ -17,6 +17,8 @@ export const DebtCard = (props: DebtCardProps) => {
     const countTotal = () => state[props.debtId].items.reduce((prevSum, item) => prevSum + item.price, 0).toFixed(2);
 
     const isPaid = () => {
+        if(state[props.debtId].debtHolders.length === 0) return false;
+        
         for (let id of state[props.debtId].debtHolders) {
             if (debtHoldersState[id].debts[props.debtId] !== true) {
                 return false;

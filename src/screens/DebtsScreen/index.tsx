@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { AddNewButton, CustomModal } from "../../components";
 import { ScreenProps } from "../../constants/types";
-import { DebtsContext, useAddDebt, useRemoveItemFromDebt, DebtHoldersContext } from "../../context";
+import { DebtsContext, useAddDebt, useRemoveItemFromDebt, DebtHoldersContext, TDebt, TDebtHoldersState } from "../../context";
 import { DebtCard } from "./DebtCard";
 import { Colors } from "../../styles/colors";
 
@@ -18,6 +18,26 @@ const items = [
 ];
 interface DebtsScreenProps extends ScreenProps {
 
+}
+
+const calculateTotalDebt = (debt: TDebt) => {
+    return debt.items.reduce((a, b) => a + b.price, 0);
+}
+
+const calculateUserDebt = (debt: TDebt) => {
+    const totalDebt = calculateTotalDebt(debt);
+    if (debt.debtHolders.length === 0) return totalDebt;
+    return (totalDebt / debt.debtHolders.length);
+}
+
+const calculatePaidDebt = (debt: TDebt, debtId: string, debtHoldersState: TDebtHoldersState) => {
+    if (debt.debtHolders.length === 0) return 0;
+    const userDebt = calculateUserDebt(debt);
+    let paidDebt: number = 0;
+    Object.keys(debtHoldersState).map(id => {
+        if (debtHoldersState[id].debts[debtId]) paidDebt += userDebt;
+    });
+    return paidDebt;
 }
 
 const DebtItem = ({ item, debtId, index }: { item: { description: string, price: number }, debtId: string, index: number }) => {
@@ -52,7 +72,9 @@ const DebtItem = ({ item, debtId, index }: { item: { description: string, price:
 const DebtModal = ({ debtId, setModal }: { debtId: string, setModal: React.Dispatch<any> }) => {
     const { state } = useContext(DebtsContext);
 
-    const TotalAmount = ({debtId}: {debtId: string}) => {
+    const TotalAmount = ({ debtId }: { debtId: string }) => {
+        const { state } = useContext(DebtsContext);
+
         return (
             <View style={{ flexDirection: "row", padding: 5 }}>
                 <Text style={{ color: Colors.orange, fontSize: 20, flex: 1 }}>Total:</Text>
@@ -61,18 +83,13 @@ const DebtModal = ({ debtId, setModal }: { debtId: string, setModal: React.Dispa
                     fontSize: 20,
                     flex: 1,
                     textAlign: "right"
-                }}>{state[debtId].items.reduce((a, b) => a + b.price, 0).toFixed(2)} {state[debtId].currency}</Text>
+                }}>{calculateTotalDebt(state[debtId]).toFixed(2)} {state[debtId].currency}</Text>
             </View>
         );
     }
 
-    const UserAmount = ({debtId}: {debtId: string}) => {
+    const UserAmount = ({ debtId }: { debtId: string }) => {
         const { state } = useContext(DebtsContext);
-
-        const calculateUserDebt = () => {
-            if(state[debtId].debtHolders.length === 0) return "";
-            return (state[debtId].items.reduce((a, b) => a + b.price, 0) / state[debtId].debtHolders.length).toFixed(2);
-        }
 
         return (
             <View style={{ flexDirection: "row", padding: 5 }}>
@@ -82,28 +99,14 @@ const DebtModal = ({ debtId, setModal }: { debtId: string, setModal: React.Dispa
                     fontSize: 20,
                     flex: 1,
                     textAlign: "right"
-                }}>{calculateUserDebt()} {state[debtId].currency}</Text>
+                }}>{calculateUserDebt(state[debtId]).toFixed(2)} {state[debtId].currency}</Text>
             </View>
         );
     }
 
-    const PaidAmount = ({debtId}: {debtId: string}) => {
+    const PaidAmount = ({ debtId }: { debtId: string }) => {
         const { state } = useContext(DebtsContext);
         const debtHoldersState = useContext(DebtHoldersContext).state;
-
-        const calculateUserDebt = () => {
-            return state[debtId].items.reduce((a, b) => a + b.price, 0) / state[debtId].debtHolders.length;
-        }
-
-        const calculatePaidDebt = () => {
-            if(state[debtId].debtHolders.length === 0) return "";
-            const userDebt = calculateUserDebt();
-            let paidDebt: number = 0;
-            Object.keys(debtHoldersState).map(id => {
-                if(debtHoldersState[id].debts[debtId]) paidDebt += userDebt;
-            });
-            return paidDebt.toFixed(2);
-        }
 
         return (
             <View style={{ flexDirection: "row", padding: 5 }}>
@@ -113,14 +116,14 @@ const DebtModal = ({ debtId, setModal }: { debtId: string, setModal: React.Dispa
                     fontSize: 20,
                     flex: 1,
                     textAlign: "right"
-                }}>{calculatePaidDebt()} {state[debtId].currency}</Text>
+                }}>{calculatePaidDebt(state[debtId], debtId, debtHoldersState).toFixed(2)} {state[debtId].currency}</Text>
             </View>
         );
     }
 
     const prices = (debtId: string) => {
         return (
-            <View style={{backgroundColor: Colors.darkestBlue, paddingVertical: 5}}>
+            <View style={{ backgroundColor: Colors.darkestBlue, paddingVertical: 5 }}>
                 <UserAmount debtId={debtId} />
                 <PaidAmount debtId={debtId} />
                 <TotalAmount debtId={debtId} />
@@ -143,7 +146,6 @@ export const DebtsScreen = (props: DebtsScreenProps) => {
     const [addDebt] = useAddDebt();
 
     const viewDebt = (debtId: string) => {
-        // return;
         setModal(<DebtModal setModal={setModal} debtId={debtId} />);
     }
 
@@ -151,11 +153,13 @@ export const DebtsScreen = (props: DebtsScreenProps) => {
         <>
             {modal}
             <ScrollView contentContainerStyle={styles.contentContainer}>
-                {Object.keys(state).map(key => <DebtCard key={key} viewDebt={viewDebt} debtId={key} />)}
+                <View style={{ paddingBottom: 70 }}>
+                    {Object.keys(state).map(key => <DebtCard key={key} viewDebt={viewDebt} debtId={key} />)}
+                </View>
             </ScrollView>
             <AddNewButton onPress={() => {
                 addDebt({
-                    description: "KaatokännitKaatokännitKaatokännitKaatokännitKaatokännitKaatokännitKaatokännitKaatokännitKaatokännit v" + Object.keys(state).length,
+                    description: "Kaatokännit v" + Object.keys(state).length,
                     currency: "EUR",
                     items,
                     debtHolders: ["this-is-a-debt-holder-id"]

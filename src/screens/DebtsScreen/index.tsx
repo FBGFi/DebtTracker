@@ -1,72 +1,13 @@
 import React, { useState, useContext } from "react";
-import { ScrollView, View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { AddNewButton, CustomModal } from "../../components";
+import { ScrollView, View, Text, StyleSheet } from "react-native";
+import { AddNewButton, CustomModal, DebtItems } from "../../components";
 import { ScreenProps } from "../../constants/types";
-import { DebtsContext, useAddDebt, useRemoveItemFromDebt, DebtHoldersContext, TDebt, TDebtHoldersState } from "../../context";
+import { calculateTotalDebt, calculateUserDebt, calculatePaidDebt } from "../../constants/utils";
+import { DebtsContext, useAddDebt, DebtHoldersContext } from "../../context";
 import { DebtCard } from "./DebtCard";
 import { Colors } from "../../styles/colors";
-
-const items = [
-    {
-        description: "Viinaa",
-        price: 666.00,
-    },
-    {
-        description: "Sipsejä",
-        price: 420.695634,
-    }
-];
 interface DebtsScreenProps extends ScreenProps {
 
-}
-
-const calculateTotalDebt = (debt: TDebt) => {
-    return debt.items.reduce((a, b) => a + b.price, 0);
-}
-
-const calculateUserDebt = (debt: TDebt) => {
-    const totalDebt = calculateTotalDebt(debt);
-    if (debt.debtHolders.length === 0) return totalDebt;
-    return (totalDebt / debt.debtHolders.length);
-}
-
-const calculatePaidDebt = (debt: TDebt, debtId: string, debtHoldersState: TDebtHoldersState) => {
-    if (debt.debtHolders.length === 0) return 0;
-    const userDebt = calculateUserDebt(debt);
-    let paidDebt: number = 0;
-    Object.keys(debtHoldersState).map(id => {
-        if (debtHoldersState[id].debts[debtId]) paidDebt += userDebt;
-    });
-    return paidDebt;
-}
-
-const DebtItem = ({ item, debtId, index }: { item: { description: string, price: number }, debtId: string, index: number }) => {
-    const { state } = useContext(DebtsContext);
-    const [removeItemFromDebt] = useRemoveItemFromDebt();
-
-    return (
-        <TouchableOpacity onPress={() => removeItemFromDebt(debtId, index)}>
-            <View style={{
-                flexDirection: "row",
-                margin: 5,
-                paddingBottom: 3,
-                borderBottomWidth: 1,
-                borderColor: Colors.orange,
-            }}>
-                <Text style={{
-                    fontSize: 20,
-                    color: Colors.lightText,
-                    flex: 2,
-                }}>{item.description}</Text>
-                <Text style={{
-                    fontSize: 20,
-                    color: Colors.lightText,
-                    flex: 1,
-                    textAlign: "right"
-                }}>{item.price.toFixed(2)} {state[debtId]?.currency}</Text>
-            </View>
-        </TouchableOpacity>
-    );
 }
 
 const DebtModal = ({ debtId, setModal }: { debtId: string, setModal: React.Dispatch<any> }) => {
@@ -136,7 +77,9 @@ const DebtModal = ({ debtId, setModal }: { debtId: string, setModal: React.Dispa
             setModal={setModal}
             outSideContent={prices(debtId)}
             title={state[debtId].description}>
-            {state[debtId].items.map((item: any, index: number) => <DebtItem key={item.description + index} item={item} debtId={debtId} index={index} />)}
+            <View style={{ marginHorizontal: 5 }}>
+                <DebtItems debtId={debtId} />
+            </View>
         </CustomModal>);
 }
 
@@ -161,7 +104,16 @@ export const DebtsScreen = (props: DebtsScreenProps) => {
                 addDebt({
                     description: "Kaatokännit v" + Object.keys(state).length,
                     currency: "EUR",
-                    items,
+                    items: [
+                        {
+                            description: "Viinaa",
+                            price: 666.00,
+                        },
+                        {
+                            description: "Sipsejä",
+                            price: 420.695634,
+                        }
+                    ],
                     debtHolders: ["this-is-a-debt-holder-id"]
                 })
             }} />

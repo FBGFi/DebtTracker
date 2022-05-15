@@ -6,7 +6,7 @@ type TAction = {
     value: any;
 }
 
-type TDebtItem = {
+export type TDebtItem = {
     description: string;
     price: number;
 }

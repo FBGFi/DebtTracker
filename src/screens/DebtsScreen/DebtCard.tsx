@@ -3,6 +3,7 @@ import { StyleSheet, Text, StyleProp } from "react-native";
 import { TouchableCard } from "../../components";
 import { DebtsContext, DebtHoldersContext } from '../../context';
 import { Colors } from "../../styles/colors";
+import { isPaid } from "../../constants/utils";
 
 interface DebtCardProps {
     debtId: string;
@@ -16,19 +17,10 @@ export const DebtCard = (props: DebtCardProps) => {
 
     const countTotal = () => state[props.debtId].items.reduce((prevSum, item) => prevSum + item.price, 0).toFixed(2);
 
-    const isPaid = () => {
-        if(state[props.debtId].debtHolders.length === 0) return false;
-        
-        for (let id of state[props.debtId].debtHolders) {
-            if (debtHoldersState[id].debts[props.debtId] !== true) {
-                return false;
-            }
-        }
-        return true;
-    }
+
 
     const combineStyles = (baseStyle: StyleProp<any>, paidStyle: StyleProp<any>, unPaidStyle: StyleProp<any>) => {
-        return isPaid() ? [baseStyle, paidStyle] : [baseStyle, unPaidStyle];
+        return isPaid(state, props.debtId, debtHoldersState) ? [baseStyle, paidStyle] : [baseStyle, unPaidStyle];
     }
 
     return (

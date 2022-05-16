@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { ScrollView, View, StyleSheet } from "react-native";
+import { ScrollView, View, StyleSheet, GestureResponderEvent } from "react-native";
 import { ScreenProps, ReactComponentProps } from "../../constants/types";
 import { DebtHoldersContext, useAddDebtHolder, DebtsContext, useSwitchDebtPaidState } from "../../context";
 import { DebtHolderCard } from "./DebtHolderCard";
@@ -17,18 +17,28 @@ interface DebtHoldersModalProps extends ReactComponentProps {
 
 const DebtHoldersModal = (props: DebtHoldersModalProps) => {
     const { state } = useContext(DebtHoldersContext);
+    const [focusedDebtId, setFocusedDebtId] = useState<string | undefined>(undefined);
     const debtsState = useContext(DebtsContext).state;
+
+    // This does not trigger if the picker card is clicked, due to it being Touchable
+    const onModalPress = (event: GestureResponderEvent) => {
+        setFocusedDebtId(undefined);        
+    }
+
     return <CustomModal
         setModal={() => {
             props.setModal(null);
         }}
+        onModalPress={onModalPress}
         title={state[props.debtHolderId].name}>
         {Object.keys(state[props.debtHolderId].debts).map(key => {
             // TODO calculate the amount of debt per person
             if (debtsState[key].debtHolders.includes(props.debtHolderId)) {
                 return (<DebtPickerCard
                     key={key}
+                    onInteract={setFocusedDebtId}
                     debtId={key}
+                    focusedDebtId={focusedDebtId}
                     debtHolderId={props.debtHolderId} />);
             }
         })}

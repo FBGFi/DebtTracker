@@ -1,83 +1,84 @@
-import React, { useState, useContext } from "react";
-import { ScrollView, View, StyleSheet, GestureResponderEvent } from "react-native";
+import React, { useState, useContext, useEffect } from "react";
+import { ScrollView, View, TextInput, TouchableWithoutFeedback, NativeSyntheticEvent, TextInputSubmitEditingEventData } from "react-native";
+import { useIsFocused } from '@react-navigation/native';
 import { ScreenProps, ReactComponentProps } from "../../constants/types";
-import { DebtHoldersContext, useAddDebtHolder, DebtsContext, useSwitchDebtPaidState } from "../../context";
+import { DebtHoldersContext, useAddDebtHolder } from "../../context";
 import { DebtHolderCard } from "./DebtHolderCard";
-import { AddNewButton, CustomModal } from "../../components";
-import { DebtPickerCard } from "./DebtPickerCard";
+import { DebtHolderModal } from "./DebtHolderModal";
+import { AddNewButton, CustomButton } from "../../components";
+import { Colors } from "../../styles/colors";
 
 interface DebtHoldersScreenProps extends ScreenProps {
     id: string;
 }
 
-interface DebtHoldersModalProps extends ReactComponentProps {
-    debtHolderId: string;
-    setModal: (modal: any) => void;
+interface AddNewHolderInputProps extends ReactComponentProps {
+    onSubmit: () => void;
 }
 
-const DebtHoldersModal = (props: DebtHoldersModalProps) => {
-    const { state } = useContext(DebtHoldersContext);
-    const [focusedDebtId, setFocusedDebtId] = useState<string | undefined>(undefined);
-    const debtsState = useContext(DebtsContext).state;
+const AddNewHolderInput = (props: AddNewHolderInputProps) => {
+    const [input, setInput] = useState("");
+    const [addDebtHolder] = useAddDebtHolder();
+    
+    const onSubmitEditing = (e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
+        addDebtHolder({name: e.nativeEvent.text, debts: {}});
+        props.onSubmit();
+    };
 
-    // This does not trigger if the picker card is clicked, due to it being Touchable
-    const onModalPress = (event: GestureResponderEvent) => {
-        setFocusedDebtId(undefined);        
+    const submit = () => {
+        addDebtHolder({name: input, debts: {}});
+        props.onSubmit();
     }
-
-    return <CustomModal
-        setModal={() => {
-            props.setModal(null);
-        }}
-        onModalPress={onModalPress}
-        title={state[props.debtHolderId].name}>
-        {Object.keys(state[props.debtHolderId].debts).map(key => {
-            // TODO calculate the amount of debt per person
-            if (debtsState[key].debtHolders.includes(props.debtHolderId)) {
-                return (<DebtPickerCard
-                    key={key}
-                    onInteract={setFocusedDebtId}
-                    debtId={key}
-                    focusedDebtId={focusedDebtId}
-                    debtHolderId={props.debtHolderId} />);
-            }
-        })}
-    </CustomModal>
+    
+    return (<View style={{ flexDirection: "row", marginHorizontal: 10, marginBottom: 10 }}>
+        <View style={{
+                flex: 5,
+                paddingHorizontal: 10,
+                borderTopWidth: 3,
+                borderBottomWidth: 3,
+                borderLeftWidth: 3,
+                borderColor: Colors.orange
+            }}>
+            <TextInput style={{
+                color: Colors.lightText,
+                fontSize: 20,
+                fontFamily: "Quicksand-Medium",
+            }} onChangeText={(e) => setInput(e)} onSubmitEditing={onSubmitEditing} autoFocus={true} />
+        </View>
+        <CustomButton style={{flex: 1}} title="Add" onPress={() => submit()} />
+    </View>)
 }
 
 export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
     const [modal, setModal] = useState<any>(null);
-    const [addDebtHolder] = useAddDebtHolder();
+    const [inputVisible, setInputVisible] = useState(false);
     const { state } = useContext(DebtHoldersContext);
-
-    // const renderHolderDebts: any = (key: string) => {
-    //     return debtsState[key].items.map((item: any) => <View key={item.description}>
-    //         <Text>{item.description}</Text>
-    //         <Text>{item.price} {item.currency}</Text>
-    //     </View>);
-    // }
+    const isFocused = useIsFocused();
 
     const viewDebtHolder = (debtHolderId: string) => {
-        setModal(<DebtHoldersModal debtHolderId={debtHolderId} setModal={setModal} />);
+        setInputVisible(false);
+        setModal(<DebtHolderModal debtHolderId={debtHolderId} setModal={setModal} />);
     }
+
+    useEffect(() => {
+        setInputVisible(false);
+    }, [isFocused]);
+
     return (
         <>
             {modal}
-            <ScrollView>
-                <View style={{ paddingBottom: 70 }}>
-                    {Object.keys(state).map(key => <DebtHolderCard key={key} debtHolderId={key} viewDebtHolder={() => viewDebtHolder(key)} />)}
+            <TouchableWithoutFeedback onPress={() => setInputVisible(false)} touchSoundDisabled={!inputVisible}>
+                <View style={{ flex: 1 }}>
+                    <ScrollView>
+                        <View style={{ paddingBottom: 70, flex: 1 }}>
+                            {Object.keys(state).map(key => <DebtHolderCard key={key} debtHolderId={key} viewDebtHolder={() => viewDebtHolder(key)} />)}
+                        </View>
+                    </ScrollView>
                 </View>
-            </ScrollView>
-            <AddNewButton onPress={() => addDebtHolder({ name: "Niko " + Object.keys(state).length, debts: {} })} />
+            </TouchableWithoutFeedback>
+            {inputVisible ? <AddNewHolderInput onSubmit={() => setInputVisible(false)} /> :
+                // <AddNewButton onPress={() => addDebtHolder({ name: "Niko " + Object.keys(state).length, debts: {} })} />}
+                <AddNewButton onPress={() => setInputVisible(true)} />}
         </>
     );
 }
-const styles = StyleSheet.create({
-    debtHolderCard: {
-        flexDirection: "row",
-    },
-    text: {
-        fontFamily: "Quicksand-Medium",
-        fontSize: 24
-    }
-});

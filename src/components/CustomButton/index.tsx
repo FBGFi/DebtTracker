@@ -8,6 +8,7 @@ interface CustomButtonProps extends ReactComponentProps {
     style?: StyleProp<ViewStyle>;
     disabled?: boolean;
     onPress?: (event: GestureResponderEvent) => void;
+    flex?: number;
 }
 
 export const CustomButton = (props: CustomButtonProps) => {
@@ -21,7 +22,7 @@ export const CustomButton = (props: CustomButtonProps) => {
 
     const memoizedStyles = useMemo(combineStyles, [props.style, props.disabled]);
     return (
-        <TouchableOpacity activeOpacity={0.6} onPress={props.onPress}>
+        <TouchableOpacity activeOpacity={0.6} onPress={props.onPress} style={{ flex: props.flex }}>
             <View style={memoizedStyles}>
                 {props.title ? <Text style={{
                     fontSize: 20,

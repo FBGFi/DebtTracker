@@ -1,36 +1,12 @@
 import React, { useState, useContext } from "react";
 import { ScrollView, View, StyleSheet } from "react-native";
-import { AddNewButton, CustomModal, DebtItems, TotalAmount, PaidAmount, UserAmount } from "../../components";
+import { AddNewButton } from "../../components";
 import { ScreenProps } from "../../constants/types";
 import { DebtsContext, useAddDebt } from "../../context";
 import { DebtCard } from "./DebtCard";
-import { Colors } from "../../styles/colors";
+import { DebtModal } from "./DebtModal";
 interface DebtsScreenProps extends ScreenProps {
 
-}
-
-const DebtModal = ({ debtId, setModal }: { debtId: string, setModal: React.Dispatch<any> }) => {
-    const { state } = useContext(DebtsContext);
-
-    const prices = (debtId: string) => {
-        return (
-            <View style={{ backgroundColor: Colors.darkestBlue, padding: 5 }}>
-                <UserAmount debtId={debtId} />
-                <PaidAmount debtId={debtId} />
-                <TotalAmount debtId={debtId} />
-            </View>
-        );
-    }
-
-    return (
-        <CustomModal
-            setModal={setModal}
-            outSideContent={prices(debtId)}
-            title={state[debtId].description}>
-            <View style={{ marginHorizontal: 5 }}>
-                <DebtItems debtId={debtId} />
-            </View>
-        </CustomModal>);
 }
 
 export const DebtsScreen = (props: DebtsScreenProps) => {

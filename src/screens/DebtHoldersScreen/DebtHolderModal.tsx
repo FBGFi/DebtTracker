@@ -18,7 +18,7 @@ const RemoveDebtHolder = (props: DebtHolderModalProps) => {
         props.setModal(null);
     }
 
-    return <CustomButton onPress={onPress} style={{borderBottomWidth: 0}} title="Remove debtholder" />;
+    return <CustomButton onPress={onPress} title="Remove debtholder" />;
 }
 
 export const DebtHolderModal = (props: DebtHolderModalProps) => {
@@ -29,6 +29,15 @@ export const DebtHolderModal = (props: DebtHolderModalProps) => {
     // This does not trigger if the picker card is clicked, due to it being Touchable
     const onModalPress = (event: GestureResponderEvent) => {
         setFocusedDebtId(undefined);
+    }
+
+    const onDebtPickerCardPress = (debtId?: string) => {
+        // Handle double pressing
+        if(focusedDebtId === debtId) {
+            setFocusedDebtId(undefined);
+        } else {
+            setFocusedDebtId(debtId);
+        }
     }
 
     return <CustomModal
@@ -42,7 +51,7 @@ export const DebtHolderModal = (props: DebtHolderModalProps) => {
             if (debtsState[key].debtHolders.includes(props.debtHolderId)) {
                 return (<DebtPickerCard
                     key={key}
-                    onInteract={setFocusedDebtId}
+                    onInteract={onDebtPickerCardPress}
                     debtId={key}
                     focusedDebtId={focusedDebtId}
                     debtHolderId={props.debtHolderId} />);

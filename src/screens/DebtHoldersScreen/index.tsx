@@ -13,39 +13,39 @@ interface DebtHoldersScreenProps extends ScreenProps {
 }
 
 interface AddNewHolderInputProps extends ReactComponentProps {
-    onSubmit: () => void;
+    onSubmit: (debtHolderId: string) => void;
 }
 
 const AddNewHolderInput = (props: AddNewHolderInputProps) => {
     const [input, setInput] = useState("");
     const [addDebtHolder] = useAddDebtHolder();
-    
+
     const onSubmitEditing = (e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
-        addDebtHolder({name: e.nativeEvent.text, debts: {}});
-        props.onSubmit();
+        const debtHolderId = addDebtHolder({ name: e.nativeEvent.text, debts: {} });
+        props.onSubmit(debtHolderId);
     };
 
     const submit = () => {
-        addDebtHolder({name: input, debts: {}});
-        props.onSubmit();
+        const debtHolderId = addDebtHolder({ name: input, debts: {} });
+        props.onSubmit(debtHolderId);
     }
-    
+
     return (<View style={{ flexDirection: "row", marginHorizontal: 10, marginBottom: 10 }}>
         <View style={{
-                flex: 5,
-                paddingHorizontal: 10,
-                borderTopWidth: 3,
-                borderBottomWidth: 3,
-                borderLeftWidth: 3,
-                borderColor: Colors.orange
-            }}>
+            flex: 5,
+            paddingHorizontal: 10,
+            borderTopWidth: 3,
+            borderBottomWidth: 3,
+            borderLeftWidth: 3,
+            borderColor: Colors.orange
+        }}>
             <TextInput style={{
                 color: Colors.lightText,
                 fontSize: 20,
                 fontFamily: "Quicksand-Medium",
             }} onChangeText={(e) => setInput(e)} onSubmitEditing={onSubmitEditing} autoFocus={true} />
         </View>
-        <CustomButton style={{flex: 1}} title="Add" onPress={() => submit()} />
+        <CustomButton style={{ flex: 1 }} title="Add" onPress={() => submit()} />
     </View>)
 }
 
@@ -58,6 +58,11 @@ export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
     const viewDebtHolder = (debtHolderId: string) => {
         setInputVisible(false);
         setModal(<DebtHolderModal debtHolderId={debtHolderId} setModal={setModal} />);
+    }
+
+    const onNewDebtHolderSubmit = (debtHolderId: string) => {
+        setInputVisible(false);
+        viewDebtHolder(debtHolderId);
     }
 
     useEffect(() => {
@@ -76,8 +81,7 @@ export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
                     </ScrollView>
                 </View>
             </TouchableWithoutFeedback>
-            {inputVisible ? <AddNewHolderInput onSubmit={() => setInputVisible(false)} /> :
-                // <AddNewButton onPress={() => addDebtHolder({ name: "Niko " + Object.keys(state).length, debts: {} })} />}
+            {inputVisible ? <AddNewHolderInput onSubmit={onNewDebtHolderSubmit} /> :
                 <AddNewButton onPress={() => setInputVisible(true)} />}
         </>
     );

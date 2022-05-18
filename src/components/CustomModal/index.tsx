@@ -20,23 +20,25 @@ export const CustomModal = (props: CustomModalProps) => {
         }}>
         <TouchableWithoutFeedback onPress={props.onModalPress} touchSoundDisabled={true}>
             <View style={{ backgroundColor: Colors.dark, flex: 1 }}>
-                <View style={{ backgroundColor: Colors.darkestBlue, position: "relative" }}>
+                <View style={{ backgroundColor: Colors.darkestBlue}}>
                     <Text style={{
                         color: Colors.orange,
                         fontSize: 20,
                         textAlign: "center",
                         padding: 10,
                     }}>{props.title}</Text>
-                    <View style={{position: "absolute", right: 10, top: 10}}>
+                    <View style={{ position: "absolute", right: 10, top: 10 }}>
                         <CustomButton style={styles.closeButton} onPress={() => props.setModal(null)}>
                             <Text style={styles.closeButtonText}>X</Text>
                         </CustomButton>
                     </View>
                     {props.headerButtons ? <View>{props.headerButtons}</View> : null}
                 </View>
-                <ScrollView contentContainerStyle={{ backgroundColor: Colors.dark }}>
-                    {props.children}
-                </ScrollView>
+                <View style={{elevation: -1, flex: 1}}>
+                    <ScrollView contentContainerStyle={{ backgroundColor: Colors.dark }}>
+                        {props.children}
+                    </ScrollView>
+                </View>
                 {props.outSideContent}
             </View>
         </TouchableWithoutFeedback>

@@ -96,6 +96,7 @@ export const useAddDebt = () => {
         for (const debtHolder of debt.debtHolders) {
             addDebtToHolder(debtHolder, debtId);
         }
+        return debtId;
     };
 
     return [addDebt];

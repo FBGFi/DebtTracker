@@ -58,12 +58,14 @@ export const useAddDebtHolder = () => {
     const { dispatch } = useContext(DebtHoldersContext);
 
     const addDebtHolder = (debtHolder: TDebtHolder) => {
+        const debtHolderId = Date.now().toString();
         dispatch({
             type: 'addDebtHolder', value: {
-                id: Date.now().toString(),
+                id: debtHolderId,
                 data: debtHolder
             }
         });
+        return debtHolderId;
     };
 
     return [addDebtHolder];

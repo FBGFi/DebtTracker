@@ -3,6 +3,7 @@ import { TouchableOpacity, Text, View, StyleSheet, TextInput, NativeSyntheticEve
 import { DebtsContext, useRemoveItemFromDebt, useUpdateDebtItemPrice, TDebtItem, useUpdateDebtItemDescription } from "../../context";
 import { Colors } from "../../styles/colors";
 import { ReactComponentProps } from "../../constants/types";
+import { CustomButton } from "../CustomButton";
 
 interface DebtItemProps extends ReactComponentProps {
     item: TDebtItem;
@@ -16,10 +17,13 @@ export const DebtItem = (props: DebtItemProps) => {
     const { state } = useContext(DebtsContext);
     const [descriptionInput, setDescriptionInput] = useState(props.item.description);
     const [priceInput, setPriceInput] = useState(props.item.price.toFixed(2));
-    // TODO not like this
     const [removeItemFromDebt] = useRemoveItemFromDebt();
     const [updateDebtItemPrice] = useUpdateDebtItemPrice();
     const [updateDebtItemDescription] = useUpdateDebtItemDescription();
+
+    const onRemovePress = () => {
+        removeItemFromDebt(props.debtId, props.index);
+    }
 
     const onDescriptionChange = (e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
         setDescriptionInput(e.nativeEvent.text);
@@ -57,14 +61,18 @@ export const DebtItem = (props: DebtItemProps) => {
                 :
                 <Text style={styles.description}>{props.item.description}</Text>}
             {props.editable ?
-                <View style={{ flex: 1, flexDirection: "row" }}><TextInput
+                <View style={{ flex: 1, flexDirection: "row" }}>
+                    <TextInput
                     onChange={onPriceChange}
                     onBlur={onPriceBlur}
                     style={styles.priceInput}
                     keyboardType="numeric"
-                    defaultValue={props.item.price.toFixed(2)} /><Text style={styles.currencyInput}> {state[props.debtId]?.currency}</Text></View>
+                    defaultValue={props.item.price.toFixed(2)} />
+                    <View style={{justifyContent: 'center'}}><Text style={styles.currencyInput}> {state[props.debtId]?.currency}</Text></View>
+                </View>
                 :
                 <Text style={styles.currency}>{props.item.price.toFixed(2)} {state[props.debtId]?.currency}</Text>}
+            {props.editable && <CustomButton onPress={onRemovePress} title="x" />}
         </View>
     );
 }

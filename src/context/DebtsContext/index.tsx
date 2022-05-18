@@ -96,6 +96,7 @@ export const useAddDebt = () => {
         for (const debtHolder of debt.debtHolders) {
             addDebtToHolder(debtHolder, debtId);
         }
+        return debtId;
     };
 
     return [addDebt];
@@ -142,7 +143,7 @@ export const useUpdateDebtItemPrice = () => {
     const { state, dispatch } = useContext(DebtsContext);
 
     const updateDebtItemPrice = (debtId: string, itemIndex: number, price: number) => {
-        if (!state[debtId]) return;
+        if (!state[debtId] || isNaN(price)) return;
         dispatch({
             type: 'updateDebtItemPrice', value: {
                 id: debtId,

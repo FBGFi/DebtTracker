@@ -8,8 +8,10 @@ interface CustomModalProps extends ReactComponentProps {
     setModal: (modal: null) => void;
     title: string;
     outSideContent?: JSX.Element | JSX.Element[] | any;
+    multiScreen?: boolean;
     onModalPress?: (event: GestureResponderEvent) => void;
     headerButtons?: JSX.Element | JSX.Element[] | any;
+    scrollEnabled?: boolean;
 }
 
 export const CustomModal = (props: CustomModalProps) => {
@@ -18,9 +20,12 @@ export const CustomModal = (props: CustomModalProps) => {
         onRequestClose={() => {
             props.setModal(null);
         }}>
-        <TouchableWithoutFeedback onPress={props.onModalPress} touchSoundDisabled={true}>
+        <TouchableWithoutFeedback
+            disabled={props.scrollEnabled !== undefined ? !props.scrollEnabled : false}
+            onPress={props.onModalPress}
+            touchSoundDisabled={true}>
             <View style={{ backgroundColor: Colors.dark, flex: 1 }}>
-                <View style={{ backgroundColor: Colors.darkestBlue}}>
+                <View style={{ backgroundColor: Colors.darkestBlue }}>
                     <Text style={{
                         color: Colors.orange,
                         fontSize: 20,
@@ -34,10 +39,12 @@ export const CustomModal = (props: CustomModalProps) => {
                     </View>
                     {props.headerButtons ? <View>{props.headerButtons}</View> : null}
                 </View>
-                <View style={{elevation: -1, flex: 1}}>
-                    <ScrollView contentContainerStyle={{ backgroundColor: Colors.dark }}>
-                        {props.children}
-                    </ScrollView>
+                <View style={{ position: "relative", flex: 1 }}>
+                    {!props.multiScreen ?
+                        <ScrollView scrollEnabled={props.scrollEnabled} contentContainerStyle={{ backgroundColor: Colors.dark }}>
+                            {props.children}
+                        </ScrollView> :
+                        props.children}
                 </View>
                 {props.outSideContent}
             </View>

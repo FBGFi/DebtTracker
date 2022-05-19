@@ -22,7 +22,7 @@ export const CustomButton = (props: CustomButtonProps) => {
 
     const memoizedStyles = useMemo(combineStyles, [props.style, props.disabled]);
     return (
-        <TouchableOpacity activeOpacity={0.6} onPress={props.onPress} style={{ flex: props.flex }}>
+        <TouchableOpacity delayPressIn={50} activeOpacity={0.6} onPress={props.onPress} style={{ flex: props.flex }}>
             <View style={memoizedStyles}>
                 {props.title ? <Text style={{
                     fontSize: 20,

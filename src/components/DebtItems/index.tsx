@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
-import { TouchableOpacity, Text, View, StyleSheet, TextInput, NativeSyntheticEvent, TextInputSubmitEditingEventData } from "react-native";
+import { Text, View, StyleSheet,  NativeSyntheticEvent, TextInputSubmitEditingEventData } from "react-native";
 import { DebtsContext, useRemoveItemFromDebt, useUpdateDebtItemPrice, TDebtItem, useUpdateDebtItemDescription } from "../../context";
 import { Colors } from "../../styles/colors";
 import { ReactComponentProps } from "../../constants/types";
-import { CustomButton } from "../CustomButton";
+import { CustomButton, CustomInput } from "../index";
 
 interface DebtItemProps extends ReactComponentProps {
     item: TDebtItem;
@@ -39,7 +39,7 @@ export const DebtItem = (props: DebtItemProps) => {
     }
 
     const onPriceChange = (e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
-        const input = parseFloat(e.nativeEvent.text);        
+        const input = parseFloat(e.nativeEvent.text);
         if (!isNaN(input)) setPriceInput(input.toFixed(2));
         else setPriceInput("0");
     }
@@ -51,9 +51,11 @@ export const DebtItem = (props: DebtItemProps) => {
             paddingBottom: 3,
             borderBottomWidth: 1,
             borderColor: Colors.orange,
-        }}>
+        }}
+            onStartShouldSetResponder={() => true}>
             {props.editable ?
-                <TextInput
+                <CustomInput
+                    wrapperStyle={{flex: 2, justifyContent: "center"}}
                     style={styles.descriptionInput}
                     defaultValue={props.item.description}
                     onChange={onDescriptionChange}
@@ -62,13 +64,14 @@ export const DebtItem = (props: DebtItemProps) => {
                 <Text style={styles.description}>{props.item.description}</Text>}
             {props.editable ?
                 <View style={{ flex: 1, flexDirection: "row" }}>
-                    <TextInput
-                    onChange={onPriceChange}
-                    onBlur={onPriceBlur}
-                    style={styles.priceInput}
-                    keyboardType="numeric"
-                    defaultValue={props.item.price.toFixed(2)} />
-                    <View style={{justifyContent: 'center'}}><Text style={styles.currencyInput}> {state[props.debtId]?.currency}</Text></View>
+                    <CustomInput
+                        wrapperStyle={{flex: 1, justifyContent: "center"}}
+                        onChange={onPriceChange}
+                        onBlur={onPriceBlur}
+                        style={styles.priceInput}
+                        keyboardType="numeric"
+                        defaultValue={props.item.price.toFixed(2)} />
+                    <View style={{ justifyContent: 'center' }}><Text style={styles.currencyInput}> {state[props.debtId]?.currency}</Text></View>
                 </View>
                 :
                 <Text style={styles.currency}>{props.item.price.toFixed(2)} {state[props.debtId]?.currency}</Text>}
@@ -109,7 +112,6 @@ const styles = StyleSheet.create({
         fontSize: 20,
         padding: 0,
         color: Colors.lightText,
-        flex: 2,
         fontFamily: "Quicksand-Medium"
     },
     priceInput: {

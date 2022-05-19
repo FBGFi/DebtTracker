@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import { Dimensions, ScrollView, View, StyleSheet, TextInput, NativeSyntheticEvent, TextInputSubmitEditingEventData, Text } from "react-native";
+import React, { useContext, useState, useRef } from "react";
+import { Dimensions, ScrollView, View, StyleSheet, TextInput, NativeSyntheticEvent, TextInputSubmitEditingEventData, NativeScrollEvent, } from "react-native";
 import { CustomModal, DebtItems, TotalAmount, PaidAmount, UserAmount, CustomButton, Picker } from "../../components";
 import { useAddDebtHolderToDebt, useRemoveDebtHolderFromDebt, useSwitchDebtPaidState, DebtsContext, useUpdateDebtDescription, useAddItemToDebt, useRemoveDebt, DebtHoldersContext } from "../../context";
 import { Colors } from "../../styles/colors";
@@ -117,9 +117,12 @@ const Prices = (props: PricesProps) => {
 
 const PickerSwiper = (props: { debtId: string }) => {
     const debtHoldersState = useContext(DebtHoldersContext).state;
+    const swiperRef = useRef<any>(null);
+    const [page, setPage] = useState<0 | 1>(0);
     const [switchDebtPaidState] = useSwitchDebtPaidState();
     const [addDebtHolderToDebt] = useAddDebtHolderToDebt();
     const [removeDebtHolderFromDebt] = useRemoveDebtHolderFromDebt();
+
     const onPickerCheck = (debtHolderId: string, value: boolean) => {
         if (value) {
             addDebtHolderToDebt(props.debtId, debtHolderId);
@@ -143,9 +146,29 @@ const PickerSwiper = (props: { debtId: string }) => {
             };
         });
     }
+
+    const onScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+        const xOffset = e.nativeEvent.contentOffset.x;
+        const screenWidth = Dimensions.get('window').width;
+        
+        // Scroll to right
+        if((xOffset >= screenWidth * 0.3 && page === 0) || xOffset > screenWidth * 0.7){
+            swiperRef.current.scrollTo({y: 0, x: screenWidth});
+            setPage(1);
+        } else {
+            swiperRef.current.scrollTo({y: 0, x: 0});
+            setPage(0);
+        }
+    }
+
     return (
         <View style={styles.pickerSwiperWrapper}>
-            <ScrollView horizontal>
+            <ScrollView 
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                decelerationRate={0.1}
+                ref={swiperRef}
+                onScrollEndDrag={onScrollEnd}>
                 <ScrollView contentContainerStyle={{ backgroundColor: Colors.dark }}>
                     <View style={{ paddingHorizontal: 5, width: Dimensions.get('window').width }}>
                         <DebtItems debtId={props.debtId} editable />

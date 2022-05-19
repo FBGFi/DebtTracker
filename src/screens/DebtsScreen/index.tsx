@@ -8,7 +8,7 @@ import { DebtModal } from "./DebtModal";
 import { Colors } from "../../styles/colors";
 
 interface AddNewDebtInputProps extends ReactComponentProps {
-    onSubmit: (debtId: string) => void;
+    onSubmit: (debtId?: string) => void;
 }
 
 const AddNewDebtInput = (props: AddNewDebtInputProps) => {
@@ -16,6 +16,10 @@ const AddNewDebtInput = (props: AddNewDebtInputProps) => {
     const [addDebt] = useAddDebt();
 
     const onSubmitEditing = (e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
+        if(input === ""){ 
+            props.onSubmit(undefined);
+            return;
+        }
         const debtId = addDebt({
             description: input,
             currency: "EUR",
@@ -26,6 +30,10 @@ const AddNewDebtInput = (props: AddNewDebtInputProps) => {
     };
 
     const submit = () => {
+        if(input === ""){ 
+            props.onSubmit(undefined);
+            return;
+        }
         const debtId = addDebt({
             description: input,
             currency: "EUR",
@@ -67,9 +75,11 @@ export const DebtsScreen = (props: DebtsScreenProps) => {
         setModal(<DebtModal setModal={setModal} debtId={debtId} />);
     }
 
-    const onNewDebtSubmit = (debtId: string) => {
+    const onNewDebtSubmit = (debtId?: string) => {
         setInputVisible(false);
-        viewDebt(debtId);
+        if(debtId){
+            viewDebt(debtId);
+        }
     }
 
     return (

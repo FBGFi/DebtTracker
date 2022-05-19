@@ -24,6 +24,7 @@ export const CustomInput = (props: CustomInputProps) => {
                 <View pointerEvents={"none"}>
                     <TextInput
                         style={props.style}
+                        multiline
                         ref={inputRef}
                         defaultValue={props.defaultValue}
                         onChange={props.onChange}

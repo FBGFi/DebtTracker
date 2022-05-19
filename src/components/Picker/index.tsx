@@ -89,5 +89,6 @@ const styles = StyleSheet.create({
     pickerText: {
         color: Colors.lightText,
         fontSize: 24,
+        fontFamily: "Quicksand-Medium",
     }
 })

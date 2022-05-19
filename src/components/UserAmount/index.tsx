@@ -9,12 +9,13 @@ export const UserAmount = ({ debtId }: { debtId: string }) => {
 
     return (
         <View style={{ flexDirection: "row", paddingVertical: 5 }}>
-            <Text style={{ color: Colors.orange, fontSize: 20, flex: 1 }}>Per person:</Text>
+            <Text style={{ color: Colors.orange, fontSize: 20, flex: 1, fontFamily: "Quicksand-Medium" }}>Per person:</Text>
             <Text style={{
                 color: Colors.lightText,
                 fontSize: 20,
                 flex: 1,
-                textAlign: "right"
+                textAlign: "right",
+                fontFamily: "Quicksand-Medium"
             }}>{calculateUserDebt(state[debtId]).toFixed(2)} {state[debtId].currency}</Text>
         </View>
     );

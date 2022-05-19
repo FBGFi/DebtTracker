@@ -3,6 +3,7 @@ import { Modal, StyleSheet, ScrollView, View, Text, TouchableWithoutFeedback, Ge
 import { ReactComponentProps } from "../../constants/types";
 import { CustomButton } from "../index";
 import { Colors } from "../../styles/colors";
+import { XIcon } from "../../assets";
 
 interface CustomModalProps extends ReactComponentProps {
     setModal: (modal: null) => void;
@@ -34,7 +35,9 @@ export const CustomModal = (props: CustomModalProps) => {
                     }}>{props.title}</Text>
                     <View style={{ position: "absolute", right: 10, top: 10 }}>
                         <CustomButton style={styles.closeButton} onPress={() => props.setModal(null)}>
-                            <Text style={styles.closeButtonText}>X</Text>
+                            <View style={{height: 25, width: 25}}>
+                                <XIcon fill={Colors.orange} />
+                            </View>
                         </CustomButton>
                     </View>
                     {props.headerButtons ? <View>{props.headerButtons}</View> : null}
@@ -56,7 +59,7 @@ const styles = StyleSheet.create({
     closeButton: {
         width: 30,
         height: 30,
-        borderRadius: 20,
+        borderWidth: 0,
         justifyContent: 'center',
         alignItems: 'center'
     },

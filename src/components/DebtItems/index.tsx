@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
-import { Text, View, StyleSheet,  NativeSyntheticEvent, TextInputSubmitEditingEventData } from "react-native";
+import { Text, View, StyleSheet, NativeSyntheticEvent, TextInputSubmitEditingEventData } from "react-native";
 import { DebtsContext, useRemoveItemFromDebt, useUpdateDebtItemPrice, TDebtItem, useUpdateDebtItemDescription } from "../../context";
 import { Colors } from "../../styles/colors";
 import { ReactComponentProps } from "../../constants/types";
 import { CustomButton, CustomInput } from "../index";
+import { TrashIcon } from "../../assets";
 
 interface DebtItemProps extends ReactComponentProps {
     item: TDebtItem;
@@ -51,11 +52,12 @@ export const DebtItem = (props: DebtItemProps) => {
             paddingBottom: 3,
             borderBottomWidth: 1,
             borderColor: Colors.orange,
+            justifyContent: "center"
         }}
             onStartShouldSetResponder={() => true}>
             {props.editable ?
                 <CustomInput
-                    wrapperStyle={{flex: 2, justifyContent: "center"}}
+                    wrapperStyle={{ flex: 2, justifyContent: "center" }}
                     style={styles.descriptionInput}
                     defaultValue={props.item.description}
                     onChange={onDescriptionChange}
@@ -65,7 +67,7 @@ export const DebtItem = (props: DebtItemProps) => {
             {props.editable ?
                 <View style={{ flex: 1, flexDirection: "row" }}>
                     <CustomInput
-                        wrapperStyle={{flex: 1, justifyContent: "center"}}
+                        wrapperStyle={{ flex: 1, justifyContent: "center" }}
                         onChange={onPriceChange}
                         onBlur={onPriceBlur}
                         style={styles.priceInput}
@@ -75,7 +77,14 @@ export const DebtItem = (props: DebtItemProps) => {
                 </View>
                 :
                 <Text style={styles.currency}>{props.item.price.toFixed(2)} {state[props.debtId]?.currency}</Text>}
-            {props.editable && <CustomButton onPress={onRemovePress} title="x" />}
+            {props.editable && 
+            <CustomButton 
+                style={{ borderWidth: 0, padding: 0, marginLeft: 10, marginRight: 5, flex: 1, backgroundColor: Colors.dark }} 
+                onPress={onRemovePress}>
+                <View style={{ flex: 1, justifyContent: "center"}}>
+                    <TrashIcon width="20" height="20"/>
+                </View>
+            </CustomButton>}
         </View>
     );
 }

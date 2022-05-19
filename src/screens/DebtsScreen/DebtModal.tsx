@@ -4,6 +4,7 @@ import { CustomModal, DebtItems, TotalAmount, PaidAmount, UserAmount, CustomButt
 import { useAddDebtHolderToDebt, useRemoveDebtHolderFromDebt, useSwitchDebtPaidState, DebtsContext, useUpdateDebtDescription, useAddItemToDebt, useRemoveDebt, DebtHoldersContext } from "../../context";
 import { Colors } from "../../styles/colors";
 import { ReactComponentProps } from "../../constants/types";
+import { PenIcon, TrashIcon, PlusIcon } from "../../assets";
 
 interface DebtModalProps extends ReactComponentProps {
     debtId: string;
@@ -66,12 +67,24 @@ const EditButtons = (props: EditButtonsProps) => {
     return (
         <View style={{ position: "relative", flexDirection: "column", padding: 5 }}>
             <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-                <CustomButton style={styles.editButton} title="Edit" onPress={() => props.setEditActive(true)} />
-                <CustomButton style={styles.editButton} title="Remove" onPress={onRemoveDebt} />
-                <CustomButton style={styles.editButton} title="Add" onPress={() => addItemToDebt(props.debtId, {
+                <CustomButton style={styles.editButton} onPress={onRemoveDebt}>
+                    <View style={{ height: 25, width: 25 }}>
+                        <TrashIcon />
+                    </View>
+                </CustomButton>
+                <CustomButton style={styles.editButton} onPress={() => addItemToDebt(props.debtId, {
                     description: "-",
                     price: 0,
-                })} />
+                })}>
+                    <View style={{ height: 25, width: 25 }}>
+                        <PlusIcon />
+                    </View>
+                </CustomButton>
+                <CustomButton style={styles.editButton} onPress={() => props.setEditActive(true)}>
+                    <View style={{ height: 25, width: 25 }}>
+                        <PenIcon />
+                    </View>
+                </CustomButton>
             </View>
         </View>
     );
@@ -175,6 +188,7 @@ const styles = StyleSheet.create({
     editButton: {
         paddingHorizontal: 5,
         paddingVertical: 3,
-        marginLeft: 5
+        marginLeft: 5,
+        borderWidth: 0
     }
 });

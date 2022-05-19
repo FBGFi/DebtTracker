@@ -13,7 +13,7 @@ interface DebtHoldersScreenProps extends ScreenProps {
 }
 
 interface AddNewHolderInputProps extends ReactComponentProps {
-    onSubmit: (debtHolderId: string) => void;
+    onSubmit: (debtHolderId?: string) => void;
 }
 
 const AddNewHolderInput = (props: AddNewHolderInputProps) => {
@@ -21,11 +21,20 @@ const AddNewHolderInput = (props: AddNewHolderInputProps) => {
     const [addDebtHolder] = useAddDebtHolder();
 
     const onSubmitEditing = (e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
-        const debtHolderId = addDebtHolder({ name: e.nativeEvent.text, debts: {} });
+        const input = e.nativeEvent.text;
+        if(input === ""){
+            props.onSubmit(undefined);
+            return;
+        }
+        const debtHolderId = addDebtHolder({ name: input, debts: {} });
         props.onSubmit(debtHolderId);
     };
 
     const submit = () => {
+        if(input === ""){
+            props.onSubmit(undefined);
+            return;
+        }
         const debtHolderId = addDebtHolder({ name: input, debts: {} });
         props.onSubmit(debtHolderId);
     }
@@ -60,9 +69,11 @@ export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
         setModal(<DebtHolderModal debtHolderId={debtHolderId} setModal={setModal} />);
     }
 
-    const onNewDebtHolderSubmit = (debtHolderId: string) => {
+    const onNewDebtHolderSubmit = (debtHolderId?: string) => {
         setInputVisible(false);
-        viewDebtHolder(debtHolderId);
+        if(debtHolderId){
+            viewDebtHolder(debtHolderId);
+        }
     }
 
     useEffect(() => {

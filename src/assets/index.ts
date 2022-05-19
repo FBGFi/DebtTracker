@@ -1,2 +1,1 @@
-// TODO
-export const yes = "";
+export * from "./images";

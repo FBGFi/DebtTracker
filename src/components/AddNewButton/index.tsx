@@ -1,15 +1,20 @@
 import React from 'react';
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { CustomButton } from "../index";
 import { ReactComponentProps } from "../../constants/types";
 import { Colors } from "../../styles/colors";
+import { PlusIcon } from "../../assets";
 
 interface AddNewButtonProps extends ReactComponentProps {
     onPress: () => void;
 }
 
 export const AddNewButton = (props: AddNewButtonProps) => {
-    return (<CustomButton style={styles.addButton} onPress={props.onPress}><Text style={styles.addButtonText}>+</Text></CustomButton>);
+    return (<CustomButton style={styles.addButton} onPress={props.onPress}>
+        <View style={{height: 25, width: 25, marginLeft: 2, marginTop: 2.5, padding: 2}}>
+            <PlusIcon />
+        </View>
+    </CustomButton>);
 }
 
 const styles = StyleSheet.create({
@@ -19,12 +24,7 @@ const styles = StyleSheet.create({
         bottom: 15,
         width: 50,
         height: 50,
-        borderRadius: 50
+        borderRadius: 50,
+        justifyContent: "center"
     },
-    addButtonText: {
-        marginTop: -12,
-        fontSize: 30,
-        fontFamily: "Quicksand-SemiBold",
-        color: Colors.lightText,
-    }
 });

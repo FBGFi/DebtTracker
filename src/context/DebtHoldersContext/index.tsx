@@ -1,5 +1,7 @@
-import React, { createContext, useReducer, useContext } from 'react';
-import { ReactComponentProps } from "../../constants/types";
+import React, { createContext, useContext } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const asyncStorageKey = "DEBT_TRACKER_DEBTHOLDERS";
 
 type TAction = {
     type: string;
@@ -17,17 +19,20 @@ export type TDebtHoldersState = {
     [id: string]: TDebtHolder;
 }
 
-export const debtHoldersInitialState: TDebtHoldersState = {
-    "this-is-a-debt-holder-id": {
-        name: "Niko",
-        debts: {
-            "this-is-a-debt-id": false
-        }
+export const getDebtHoldersStateFromStorage = async (): Promise<TDebtHoldersState> => {
+    const debtHolders = await AsyncStorage.getItem(asyncStorageKey);
+    if (debtHolders) {
+        return JSON.parse(debtHolders);
     }
+    return {};
 }
+
+export const debtHoldersInitialState: TDebtHoldersState = {};
 
 export function debtHoldersReducer(state: TDebtHoldersState, action: TAction): TDebtHoldersState {
     switch (action.type) {
+        case 'REPLACE_ALL_DEBTHOLDERS':
+            return {...action.value};
         case 'addDebtHolder':
             state[action.value.id] = action.value.data;
             break;
@@ -49,6 +54,7 @@ export function debtHoldersReducer(state: TDebtHoldersState, action: TAction): T
         default:
             break;
     }
+    AsyncStorage.setItem(asyncStorageKey, JSON.stringify(state));
     return { ...state };
 }
 

@@ -1,5 +1,8 @@
 import React, { createContext, useContext } from 'react';
 import { useAddDebtToHolder, DebtHoldersContext, useRemoveDebtFromHolder } from "../index";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const asyncStorageKey = "DEBT_TRACKER_DEBTS";
 
 type TAction = {
     type: string;
@@ -22,27 +25,20 @@ export type TDebtsState = {
     [id: string]: TDebt;
 }
 
-
-export const debtsInitialState: TDebtsState = {
-    "this-is-a-debt-id": {
-        description: "Kaatokännit",
-        currency: "EUR",
-        items: [
-            {
-                description: "Viinaa",
-                price: 666.00
-            },
-            {
-                description: "Sipsejä",
-                price: 420.69
-            }
-        ],
-        debtHolders: ["this-is-a-debt-holder-id"]
+export const getDebtsStateFromStorage = async (): Promise<TDebtsState> => {
+    const debts = await AsyncStorage.getItem(asyncStorageKey);
+    if (debts) {
+        return JSON.parse(debts);
     }
+    return {};
 }
+
+export const debtsInitialState: TDebtsState = {};
 
 export function debtsReducer(state: TDebtsState, action: TAction): TDebtsState {
     switch (action.type) {
+        case 'REPLACE_ALL_DEBTS':
+            return { ...action.value };
         case 'addDebt':
             state[action.value.id] = action.value.data;
             break;
@@ -76,6 +72,7 @@ export function debtsReducer(state: TDebtsState, action: TAction): TDebtsState {
         default:
             break;
     }
+    AsyncStorage.setItem(asyncStorageKey, JSON.stringify(state));
     return { ...state };
 }
 
@@ -114,7 +111,7 @@ export const useRemoveDebt = () => {
             }
         });
         Object.keys(debtHoldersState).map(debtHolderId => {
-            if(debtHoldersState[debtHolderId].debts[debtId] !== undefined) {
+            if (debtHoldersState[debtHolderId].debts[debtId] !== undefined) {
                 removeDebtFromHolder(debtHolderId, debtId);
             }
         });
@@ -248,12 +245,12 @@ export const useRemoveDebtHolderFromDebt = () => {
 }
 
 export const useRemoveDebtHolderFromAllDebts = () => {
-    const {state} = useContext(DebtsContext);
+    const { state } = useContext(DebtsContext);
     const [removeDebtHolderFromDebt] = useRemoveDebtHolderFromDebt();
 
     const removeDebtHolderFromAllDebts = (debtHolderId: string) => {
-        for(const debtId of Object.keys(state)){
-            if(state[debtId].debtHolders.includes(debtHolderId)){
+        for (const debtId of Object.keys(state)) {
+            if (state[debtId].debtHolders.includes(debtHolderId)) {
                 removeDebtHolderFromDebt(debtId, debtHolderId);
             }
         }

@@ -155,6 +155,7 @@ export const useUpdateDebtItemPrice = () => {
 
     return [updateDebtItemPrice];
 }
+
 export const useUpdateDebtItemDescription = () => {
     const { state, dispatch } = useContext(DebtsContext);
 
@@ -244,4 +245,19 @@ export const useRemoveDebtHolderFromDebt = () => {
     }
 
     return [removeDebtHolderFromDebt];
+}
+
+export const useRemoveDebtHolderFromAllDebts = () => {
+    const {state} = useContext(DebtsContext);
+    const [removeDebtHolderFromDebt] = useRemoveDebtHolderFromDebt();
+
+    const removeDebtHolderFromAllDebts = (debtHolderId: string) => {
+        for(const debtId of Object.keys(state)){
+            if(state[debtId].debtHolders.includes(debtHolderId)){
+                removeDebtHolderFromDebt(debtId, debtHolderId);
+            }
+        }
+    }
+
+    return [removeDebtHolderFromAllDebts];
 }

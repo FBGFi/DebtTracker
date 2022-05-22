@@ -9,6 +9,7 @@ interface CustomInputProps extends ReactComponentProps {
     onChange?: (e: NativeSyntheticEvent<TextInputChangeEventData>) => void;
     onBlur?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
     keyboardType?: "numeric";
+    multiline?: boolean;
 }
 
 export const CustomInput = (props: CustomInputProps) => {
@@ -24,7 +25,7 @@ export const CustomInput = (props: CustomInputProps) => {
                 <View pointerEvents={"none"}>
                     <TextInput
                         style={props.style}
-                        multiline
+                        multiline={props.multiline !== undefined ? props.multiline : true}
                         ref={inputRef}
                         defaultValue={props.defaultValue}
                         onChange={props.onChange}

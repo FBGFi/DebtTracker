@@ -17,10 +17,8 @@ const App: React.FunctionComponent = () => {
   if (!appLoaded) SplashScreen.show();
 
   const prepareApp = () => {
-    setTimeout(() => {
-      SplashScreen.hide();
-      setAppLoaded(true);
-    }, 1000);
+    SplashScreen.hide();
+    setAppLoaded(true);
   }
 
   return (

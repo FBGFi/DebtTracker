@@ -22,20 +22,20 @@ export const CustomModal = (props: CustomModalProps) => {
             props.setModal(null);
         }}>
         <TouchableWithoutFeedback
-            disabled={props.scrollEnabled !== undefined ? !props.scrollEnabled : false}
+            disabled={props.scrollEnabled !== undefined || !props.onModalPress ? !props.scrollEnabled : false}
             onPress={props.onModalPress}
             touchSoundDisabled={true}>
             <View style={{ backgroundColor: Colors.dark, flex: 1 }}>
                 <View style={{ backgroundColor: Colors.darkestBlue }}>
-                    <Text style={{
-                        color: Colors.orange,
-                        fontSize: 20,
-                        textAlign: "center",
-                        padding: 10,
-                    }}>{props.title}</Text>
-                    <View style={{ position: "absolute", right: 10, top: 10 }}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                        <Text style={{
+                            color: Colors.orange,
+                            fontSize: 20,
+                            padding: 10,
+                            flex: 1,
+                        }}>{props.title}</Text>
                         <CustomButton style={styles.closeButton} onPress={() => props.setModal(null)}>
-                            <View style={{height: 25, width: 25}}>
+                            <View style={{ height: 25, width: 25 }}>
                                 <XIcon fill={Colors.orange} />
                             </View>
                         </CustomButton>
@@ -57,11 +57,7 @@ export const CustomModal = (props: CustomModalProps) => {
 
 const styles = StyleSheet.create({
     closeButton: {
-        width: 30,
-        height: 30,
         borderWidth: 0,
-        justifyContent: 'center',
-        alignItems: 'center'
     },
     closeButtonText: {
         fontSize: 20,

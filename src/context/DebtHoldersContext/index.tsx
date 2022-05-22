@@ -19,12 +19,11 @@ export type TDebtHoldersState = {
     [id: string]: TDebtHolder;
 }
 
-export const getDebtHoldersStateFromStorage = async (): Promise<TDebtHoldersState> => {
+export const getDebtHoldersStateFromStorage = async (): Promise<TDebtHoldersState | undefined> => {
     const debtHolders = await AsyncStorage.getItem(asyncStorageKey);
     if (debtHolders) {
         return JSON.parse(debtHolders);
     }
-    return {};
 }
 
 export const debtHoldersInitialState: TDebtHoldersState = {};

@@ -9,3 +9,5 @@ export * from "./PaidAmount";
 export * from "./UserAmount";
 export * from "./Picker";
 export * from "./CustomInput";
+export * from "./Header";
+export * from "./SettingsModal";

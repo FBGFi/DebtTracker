@@ -1,7 +1,26 @@
 import React, { useContext, useState, useRef } from "react";
-import { Dimensions, ScrollView, View, StyleSheet, TextInput, NativeSyntheticEvent, TextInputSubmitEditingEventData, NativeScrollEvent, } from "react-native";
+import {
+    Dimensions,
+    ScrollView,
+    View,
+    StyleSheet,
+    TextInput,
+    NativeSyntheticEvent,
+    TextInputSubmitEditingEventData,
+    NativeScrollEvent,
+    Alert
+} from "react-native";
 import { CustomModal, DebtItems, TotalAmount, PaidAmount, UserAmount, CustomButton, Picker } from "../../components";
-import { useAddDebtHolderToDebt, useRemoveDebtHolderFromDebt, useSwitchDebtPaidState, DebtsContext, useUpdateDebtDescription, useAddItemToDebt, useRemoveDebt, DebtHoldersContext } from "../../context";
+import {
+    useAddDebtHolderToDebt,
+    useRemoveDebtHolderFromDebt,
+    useSwitchDebtPaidState,
+    DebtsContext,
+    useUpdateDebtDescription,
+    useAddItemToDebt,
+    useRemoveDebt,
+    DebtHoldersContext
+} from "../../context";
 import { Colors } from "../../styles/colors";
 import { ReactComponentProps } from "../../constants/types";
 import { PenIcon, TrashIcon, PlusIcon } from "../../assets";
@@ -56,12 +75,29 @@ interface EditButtonsProps extends DebtModalProps {
 }
 
 const EditButtons = (props: EditButtonsProps) => {
+    const {state} = useContext(DebtsContext);
     const [addItemToDebt] = useAddItemToDebt();
     const [removeDebt] = useRemoveDebt();
 
     const onRemoveDebt = () => {
-        props.setModal(null);
-        removeDebt(props.debtId);
+        Alert.alert(
+            "Confirm removal",
+            `Are you sure you want to remove ${state[props.debtId].description}?`,
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "OK",
+                    onPress: () => {
+                        props.setModal(null);
+                        removeDebt(props.debtId);
+                    },
+                    style: "default"
+                }
+            ]
+        );
     }
 
     return (
@@ -150,20 +186,20 @@ const PickerSwiper = (props: { debtId: string }) => {
     const onScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
         const xOffset = e.nativeEvent.contentOffset.x;
         const screenWidth = Dimensions.get('window').width;
-        
+
         // Scroll to right
-        if((xOffset >= screenWidth * 0.3 && page === 0) || xOffset > screenWidth * 0.7){
-            swiperRef.current.scrollTo({y: 0, x: screenWidth});
+        if ((xOffset >= screenWidth * 0.3 && page === 0) || xOffset > screenWidth * 0.7) {
+            swiperRef.current.scrollTo({ y: 0, x: screenWidth });
             setPage(1);
         } else {
-            swiperRef.current.scrollTo({y: 0, x: 0});
+            swiperRef.current.scrollTo({ y: 0, x: 0 });
             setPage(0);
         }
     }
 
     return (
         <View style={styles.pickerSwiperWrapper}>
-            <ScrollView 
+            <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 decelerationRate={0.1}

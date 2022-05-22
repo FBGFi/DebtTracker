@@ -1,7 +1,13 @@
 import React, { useState, useContext } from "react";
-import { GestureResponderEvent, TextInput, View, StyleSheet, NativeSyntheticEvent, TextInputSubmitEditingEventData } from "react-native";
+import { Alert, GestureResponderEvent, TextInput, View, StyleSheet, NativeSyntheticEvent, TextInputSubmitEditingEventData } from "react-native";
 import { ReactComponentProps } from "../../constants/types";
-import { DebtHoldersContext, DebtsContext, useRemoveDebtHolder, useUpdateDebtHolderName } from "../../context";
+import {
+    DebtHoldersContext,
+    DebtsContext, 
+    useRemoveDebtHolder, 
+    useUpdateDebtHolderName,
+    useRemoveDebtHolderFromAllDebts,
+} from "../../context";
 import { CustomButton, CustomModal } from "../../components";
 import { DebtPickerCard } from "./DebtPickerCard";
 import { Colors } from "../../styles/colors";
@@ -22,11 +28,30 @@ interface EditButtonsProps extends DebtHolderModalProps {
 }
 
 const EditButtons = (props: EditButtonsProps) => {
+    const { state } = useContext(DebtHoldersContext);
     const [removeDebtHolder] = useRemoveDebtHolder();
+    const [removeDebtHolderFromAllDebts] = useRemoveDebtHolderFromAllDebts();
 
     const onRemovePress = () => {
-        removeDebtHolder(props.debtHolderId);
-        props.setModal(null);
+        Alert.alert(
+            "Confirm removal",
+            `Are you sure you want to remove ${state[props.debtHolderId].name}?`,
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "OK",
+                    onPress: () => {
+                        props.setModal(null);
+                        removeDebtHolderFromAllDebts(props.debtHolderId);
+                        removeDebtHolder(props.debtHolderId);
+                    },
+                    style: "default"
+                }
+            ]
+        );
     }
 
     return (

@@ -1,11 +1,12 @@
-import React, { useState, useContext } from 'react';
-import { Text, StyleSheet, StyleProp, View } from 'react-native';
+import React, {  useContext } from 'react';
+import { Text, StyleSheet, StyleProp, View, Alert } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import { DebtsContext, useSwitchDebtPaidState, DebtHoldersContext, useRemoveDebtHolderFromDebt } from "../../context";
 import { ReactComponentProps } from "../../constants/types";
 import { calculateUserDebt, isPaid } from "../../constants/utils";
 import { Colors } from "../../styles/colors";
 import { TouchableCard, DebtItems, CustomButton, TotalAmount } from "../../components";
+import { TrashIcon, XIcon } from "../../assets";
 
 interface DebtPickerCardProps extends ReactComponentProps {
     debtId: string;
@@ -28,21 +29,49 @@ export const DebtPickerCard = (props: DebtPickerCardProps) => {
         return debtHoldersState[props.debtHolderId]?.debts[props.debtId];
     }
 
+    const onRemovalPress = () => {
+        Alert.alert(
+            "Confirm removal",
+            `Are you sure you want to remove ${state[props.debtId].description}?`,
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "OK",
+                    onPress: () => {
+                        removeDebtHolderFromDebt(props.debtId, props.debtHolderId)
+                    },
+                    style: "default"
+                }
+            ]
+        );
+    }
+
     const Content = () => {
         return <View style={styles.content}>
             <DebtItems debtId={props.debtId} />
             <TotalAmount debtId={props.debtId} />
-            <View style={{ flexDirection: "row", justifyContent: "flex-end", paddingVertical: 10 }}>
-                <Text style={styles.text}>Paid: </Text>
-                <CheckBox
-                    tintColors={{ true: Colors.paidColor, false: Colors.unPaidColor }}
-                    disabled={false}
-                    value={isPaidByUser()}
-                    onChange={() => switchDebtPaidState(props.debtHolderId, props.debtId)} />
-            </View>
-            <View style={{ flexDirection: "row", flex: 1, justifyContent: "space-between" }}>
-                <CustomButton style={{ marginRight: 5, padding: 5, borderRadius: 5 }} flex={1} title="Remove" onPress={() => removeDebtHolderFromDebt(props.debtId, props.debtHolderId)} />
-                <CustomButton style={{ marginLeft: 5, padding: 5, borderRadius: 5 }} flex={1} title="Close" onPress={() => props.onInteract()} />
+            <View style={{ flexDirection: "row", justifyContent: "flex-end", paddingVertical: 10, marginTop: 10 }}>
+                <View style={{ flexDirection: "row", flex: 1 }}>
+                    <Text style={styles.text}>Paid: </Text>
+                    <CheckBox
+                        tintColors={{ true: Colors.paidColor, false: Colors.unPaidColor }}
+                        disabled={false}
+                        value={isPaidByUser()}
+                        onChange={() => switchDebtPaidState(props.debtHolderId, props.debtId)} />
+                </View>
+                <CustomButton style={{ marginLeft: 10, padding: 0, borderWidth: 0 }} onPress={() => onRemovalPress()}>
+                    <View style={{ height: 25, width: 25 }}>
+                        <TrashIcon />
+                    </View>
+                </CustomButton>
+                <CustomButton style={{ marginLeft: 10, padding: 0, borderWidth: 0 }} onPress={() => props.onInteract()}>
+                    <View style={{ height: 25, width: 25 }}>
+                        <XIcon />
+                    </View>
+                </CustomButton>
             </View>
         </View>
     }

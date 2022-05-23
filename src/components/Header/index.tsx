@@ -27,6 +27,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         flexDirection: "row",
         justifyContent: "space-between",
+        elevation: 100,
+        zIndex: 100,
     },
     title: {
         color: Colors.orange,

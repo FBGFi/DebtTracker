@@ -19,11 +19,14 @@ import {
     useUpdateDebtDescription,
     useAddItemToDebt,
     useRemoveDebt,
-    DebtHoldersContext
+    DebtHoldersContext,
+    SettingsContext,
 } from "../../context";
 import { Colors } from "../../styles/colors";
 import { ReactComponentProps } from "../../constants/types";
-import { PenIcon, TrashIcon, PlusIcon } from "../../assets";
+import { calculateTotalDebt, calculateUserDebt } from "../../constants/utils";
+import { PenIcon, TrashIcon, PlusIcon, ClipBoardIcon } from "../../assets";
+import Clipboard from "@react-native-clipboard/clipboard";
 
 interface DebtModalProps extends ReactComponentProps {
     debtId: string;
@@ -75,7 +78,9 @@ interface EditButtonsProps extends DebtModalProps {
 }
 
 const EditButtons = (props: EditButtonsProps) => {
-    const {state} = useContext(DebtsContext);
+    const { state } = useContext(DebtsContext);
+    const debtHoldersState = useContext(DebtHoldersContext).state;
+    const settingsState = useContext(SettingsContext).state;
     const [addItemToDebt] = useAddItemToDebt();
     const [removeDebt] = useRemoveDebt();
 
@@ -100,9 +105,30 @@ const EditButtons = (props: EditButtonsProps) => {
         );
     }
 
+    const parseDebtToText = (): string => {
+        const description = state[props.debtId].description;
+        const totalAmount = calculateTotalDebt(state[props.debtId]).toFixed(2);
+        const userAmount = calculateUserDebt(state[props.debtId]).toFixed(2);
+        const debtItems = state[props.debtId].items.map((debtItem) => `${debtItem.description}: ${debtItem.price.toFixed(2)} ${state[props.debtId].currency}`).join("\n");
+        const debtHolders = Object.entries(debtHoldersState).map(([debtHolderId, debtHolder]) => {
+            if(state[props.debtId].debtHolders.includes(debtHolderId)) return debtHolder.name;
+        }).join(", ");
+        return `Debt: ${description}\n\nItems:\n${debtItems}\n\nTotal amount: ${totalAmount}\nPer person: ${userAmount}\n\nDebt holders: ${debtHolders}\n\nRecipient: ${settingsState.username}\nBank account: ${settingsState.bankAccount}\nMobile pay: ${settingsState.mobilePay}`;
+    }
+
+    const copyDebtToClipboard = () => {
+        const parsedDebt = parseDebtToText()
+        Clipboard.setString(parsedDebt);
+    }
+
     return (
         <View style={{ position: "relative", flexDirection: "column", padding: 5 }}>
             <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+                <CustomButton onPressAlertText="Copied!" style={styles.editButton} onPress={copyDebtToClipboard}>
+                    <View style={{ height: 25, width: 25 }}>
+                        <ClipBoardIcon />
+                    </View>
+                </CustomButton>
                 <CustomButton style={styles.editButton} onPress={onRemoveDebt}>
                     <View style={{ height: 25, width: 25 }}>
                         <TrashIcon />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import {
   StyleSheet,
 } from 'react-native';
@@ -17,24 +17,31 @@ const App: React.FunctionComponent = () => {
   if (!appLoaded) SplashScreen.show();
 
   const prepareApp = () => {
-    SplashScreen.hide();
     setAppLoaded(true);
   }
 
+  useLayoutEffect(() => {
+    if(appLoaded){
+      setTimeout(() => SplashScreen.hide(), 1000);
+    }
+  }, [appLoaded]);
+
   return (
     <StateProvider onStorageLoad={prepareApp}>
-      <NavigationContainer theme={AppTheme}>
-        <Tab.Navigator 
-          tabBar={props => <BottomNavigation {...props} />}          
-          initialRouteName='Debts'>
-          <Tab.Screen options={{
-            header: (props) => <Header {...props} />
-          }} name="Debts" component={DebtsScreen} />
-          <Tab.Screen options={{
-            header: (props) => <Header {...props} />
-          }} name="Debt Holders" component={DebtHoldersScreen} />
-        </Tab.Navigator>
-      </NavigationContainer>
+      {appLoaded &&
+        <NavigationContainer theme={AppTheme}>
+          <Tab.Navigator
+            tabBar={props => <BottomNavigation {...props} />}
+            initialRouteName='Debts'>
+            <Tab.Screen options={{
+              header: (props) => <Header {...props} />
+            }} name="Debts" component={DebtsScreen} />
+            <Tab.Screen options={{
+              header: (props) => <Header {...props} />
+            }} name="Debt Holders" component={DebtHoldersScreen} />
+          </Tab.Navigator>
+        </NavigationContainer>
+      }
     </StateProvider >
   );
 };

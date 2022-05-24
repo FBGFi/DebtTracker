@@ -6,6 +6,7 @@ interface CustomInputProps extends ReactComponentProps {
     wrapperStyle?: StyleProp<ViewStyle>;
     style?: StyleProp<TextStyle>;
     defaultValue?: string;
+    value?: string;
     onChange?: (e: NativeSyntheticEvent<TextInputChangeEventData>) => void;
     onBlur?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
     keyboardType?: "numeric";
@@ -15,7 +16,7 @@ interface CustomInputProps extends ReactComponentProps {
 
 export const CustomInput = (props: CustomInputProps) => {
     const inputRef = React.useRef<TextInput>(null);
-    const [value, setValue] = useState(props.defaultValue || "");
+    const [value, setValue] = useState(props.value || props.defaultValue || "");
     const [focused, isFocused] = useState(false);
     const [selection, setSelection] = useState({
         start: props.overWriteOnSelection ? 0 : value.length, 
@@ -58,7 +59,7 @@ export const CustomInput = (props: CustomInputProps) => {
                         style={props.style}
                         multiline={props.multiline !== undefined ? props.multiline : true}
                         ref={inputRef}
-                        value={value}
+                        value={props.value ?? value}
                         onChange={onChange}
                         onBlur={onBlur}
                         keyboardType={props.keyboardType}

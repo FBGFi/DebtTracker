@@ -106,14 +106,19 @@ const EditButtons = (props: EditButtonsProps) => {
     }
 
     const parseDebtToText = (): string => {
-        const description = state[props.debtId].description;
-        const totalAmount = calculateTotalDebt(state[props.debtId]).toFixed(2);
-        const userAmount = calculateUserDebt(state[props.debtId]).toFixed(2);
-        const debtItems = state[props.debtId].items.map((debtItem) => `${debtItem.description}: ${debtItem.price.toFixed(2)} ${state[props.debtId].currency}`).join("\n");
-        const debtHolders = Object.entries(debtHoldersState).map(([debtHolderId, debtHolder]) => {
-            if(state[props.debtId].debtHolders.includes(debtHolderId)) return debtHolder.name;
-        }).join(", ");
-        return `Debt: ${description}\n\nItems:\n${debtItems}\n\nTotal amount: ${totalAmount}\nPer person: ${userAmount}\n\nDebt holders: ${debtHolders}\n\nRecipient: ${settingsState.username}\nBank account: ${settingsState.bankAccount}\nMobile pay: ${settingsState.mobilePay}`;
+        const parsedText = [
+            `Debt: ${state[props.debtId].description}`,
+            `\nItems:\n${state[props.debtId].items.map((debtItem) => `${debtItem.description}: ${debtItem.price.toFixed(2)} ${state[props.debtId].currency}`).join("\n")}`,
+            `\nTotal amount: ${calculateTotalDebt(state[props.debtId]).toFixed(2)} ${state[props.debtId].currency}`,
+            `Per person: ${calculateUserDebt(state[props.debtId]).toFixed(2)} ${state[props.debtId].currency}`,
+            `\nDebt holders: ${Object.entries(debtHoldersState).map(([debtHolderId, debtHolder]) => {
+                if(state[props.debtId].debtHolders.includes(debtHolderId)) return debtHolder.name;
+            }).join(", ")}`,
+            `\nRecipient: ${settingsState.username}`,
+            `Bank account: ${settingsState.bankAccount}`,
+            `Mobile pay: ${settingsState.mobilePay}`,
+        ].join("\n");
+        return parsedText;
     }
 
     const copyDebtToClipboard = () => {

@@ -77,8 +77,9 @@ export const SettingsModal = (props: SettingsModalProps) => {
             setUserName(state.username);
             return;
         }
-        setUserName(parseUserName(username));
-        saveUserName(parseUserName(username));
+        const parsedUserName = parseUserName(username);
+        setUserName(parsedUserName);
+        saveUserName(parsedUserName);
     }
     const formatAndSaveBankAccount = () => {
         if (bankAccount === "") {
@@ -86,8 +87,9 @@ export const SettingsModal = (props: SettingsModalProps) => {
             return;
         }
         isValidBankAccount(validateBankAccount(bankAccount));
-        setBankAccount(parseBankAccount(bankAccount));
-        saveBankAccount(parseBankAccount(bankAccount));
+        const parsedBankAccount = parseBankAccount(bankAccount);
+        setBankAccount(parsedBankAccount);
+        saveBankAccount(parsedBankAccount);
     }
     const formatAndSaveMobilePay = () => {
         if (mobilePay === "") {
@@ -95,8 +97,9 @@ export const SettingsModal = (props: SettingsModalProps) => {
             return;
         }
         isValidMobilePay(validateMobilePay(mobilePay));
-        setMobilePay(parseMobilePay(mobilePay));
-        saveMobilePay(parseMobilePay(mobilePay));
+        const parsedMobilePay = parseMobilePay(mobilePay);
+        setMobilePay(parsedMobilePay);
+        saveMobilePay(parsedMobilePay);
     }
 
     return (<CustomModal setModal={props.setModal} title="Settings">
@@ -106,7 +109,7 @@ export const SettingsModal = (props: SettingsModalProps) => {
                 style={styles.inputText}
                 multiline={false}
                 wrapperStyle={styles.inputWrapper}
-                defaultValue={username}
+                value={username}
                 onChange={(e: NativeSyntheticEvent<TextInputFocusEventData>) => setUserName(e.nativeEvent.text)}
                 onBlur={formatAndSaveUserName} />
         </View>
@@ -115,7 +118,7 @@ export const SettingsModal = (props: SettingsModalProps) => {
             <CustomInput
                 style={styles.inputText}
                 multiline={false}
-                defaultValue={bankAccount}
+                value={bankAccount}
                 onChange={(e: NativeSyntheticEvent<TextInputFocusEventData>) => setBankAccount(e.nativeEvent.text)}
                 onBlur={formatAndSaveBankAccount}
                 wrapperStyle={[styles.inputWrapper, !validBankAccount && { borderColor: Colors.unPaidColor }]} />
@@ -125,7 +128,7 @@ export const SettingsModal = (props: SettingsModalProps) => {
             <CustomInput
                 style={styles.inputText}
                 multiline={false}
-                defaultValue={mobilePay}
+                value={mobilePay}
                 onChange={(e: NativeSyntheticEvent<TextInputFocusEventData>) => setMobilePay(e.nativeEvent.text)}
                 onBlur={formatAndSaveMobilePay}
                 wrapperStyle={[styles.inputWrapper, !validMobilePay && { borderColor: Colors.unPaidColor }]} />

@@ -53,7 +53,7 @@ export const BottomNavigation = ({ state, descriptors, navigation }: any) => {
                         onLongPress={onLongPress}
                         style={{ flex: 1 }}
                     >
-                        <View style={{ padding: 15, backgroundColor: isFocused ? Colors.dark : undefined }}>
+                        <View style={{ padding: 20, backgroundColor: isFocused ? Colors.dark : undefined }}>
                             <Text style={{
                                 color: isFocused ? Colors.orange : Colors.lightText,
                                 fontSize: 20,

@@ -23,7 +23,7 @@ export const Header = (props: any) => {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: Colors.darkestBlue,
-        paddingVertical: 10,
+        paddingVertical: 15,
         paddingHorizontal: 20,
         flexDirection: "row",
         justifyContent: "space-between",

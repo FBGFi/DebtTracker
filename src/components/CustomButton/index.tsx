@@ -6,6 +6,7 @@ import { Colors } from "../../styles/colors";
 interface CustomButtonProps extends ReactComponentProps {
     title?: string;
     style?: StyleProp<ViewStyle>;
+    touchableStyle?: StyleProp<any>;
     disabled?: boolean;
     onPress?: (event: GestureResponderEvent) => void;
     flex?: number;
@@ -35,16 +36,18 @@ export const CustomButton = (props: CustomButtonProps) => {
     }
 
     const onPress = (event: GestureResponderEvent) => {
+        console.log("press");
+
         if (props.onPress) {
             props.onPress(event);
         }
-        if (props.onPressAlertText) {            
-            setFadeAnimation(new Animated.Value(1));          
+        if (props.onPressAlertText) {
+            setFadeAnimation(new Animated.Value(1));
         }
     }
 
     useEffect(() => {
-        if(fadeAnimation !== 0){
+        if (fadeAnimation !== 0) {
             Animated.timing(
                 fadeAnimation,
                 {
@@ -59,7 +62,7 @@ export const CustomButton = (props: CustomButtonProps) => {
 
     const memoizedStyles = useMemo(combineStyles, [props.style, props.disabled]);
     return (
-        <TouchableOpacity delayPressIn={50} activeOpacity={0.6} onPress={onPress} style={{ flex: props.flex }}>
+        <TouchableOpacity delayPressIn={50} activeOpacity={0.6} onPress={onPress} style={[props.touchableStyle, {flex: props.flex}]}>
             <View style={memoizedStyles}>
                 {props.title ? <Text style={{
                     fontSize: 20,

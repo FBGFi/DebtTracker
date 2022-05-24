@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, View } from "react-native";
 import { CustomButton } from "../index";
 import { ReactComponentProps } from "../../constants/types";
-import { Colors } from "../../styles/colors";
 import { PlusIcon } from "../../assets";
 
 interface AddNewButtonProps extends ReactComponentProps {
@@ -10,7 +9,7 @@ interface AddNewButtonProps extends ReactComponentProps {
 }
 
 export const AddNewButton = (props: AddNewButtonProps) => {
-    return (<CustomButton style={styles.addButton} onPress={props.onPress}>
+    return (<CustomButton touchableStyle={styles.touchable} style={styles.addButton} onPress={props.onPress}>
         <View style={{height: 25, width: 25, marginLeft: 2, marginTop: 2.5, padding: 2}}>
             <PlusIcon />
         </View>
@@ -18,13 +17,17 @@ export const AddNewButton = (props: AddNewButtonProps) => {
 }
 
 const styles = StyleSheet.create({
-    addButton: {
+    touchable: {
         position: "absolute",
+        width: 60,
+        height: 60,
         right: 15,
         bottom: 15,
-        width: 50,
-        height: 50,
-        borderRadius: 50,
+    },
+    addButton: {
+        width: 60,
+        height: 60,
+        borderRadius: 60,
         justifyContent: "center"
     },
 });

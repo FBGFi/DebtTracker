@@ -57,9 +57,10 @@ export const DebtItem = (props: DebtItemProps) => {
             onStartShouldSetResponder={() => true}>
             {props.editable ?
                 <CustomInput
-                    wrapperStyle={{ flex: 2, justifyContent: "center" }}
+                    wrapperStyle={{ flex: 2, justifyContent: "center", marginRight: 10 }}
                     style={styles.descriptionInput}
                     defaultValue={props.item.description}
+                    multiline
                     overWriteOnSelection={props.item.description === "-"}
                     onChange={onDescriptionChange}
                     onBlur={onDescriptionBlur} />
@@ -72,21 +73,22 @@ export const DebtItem = (props: DebtItemProps) => {
                         onChange={onPriceChange}
                         onBlur={onPriceBlur}
                         style={styles.priceInput}
+                        multiline
                         keyboardType="numeric"
                         overWriteOnSelection={props.item.price === 0}
-                        defaultValue={props.item.price.toFixed(2)} />
+                        defaultValue={priceInput} />
                     <View style={{ justifyContent: 'center' }}><Text style={styles.currencyInput}> {state[props.debtId]?.currency}</Text></View>
                 </View>
                 :
                 <Text style={styles.currency}>{props.item.price.toFixed(2)} {state[props.debtId]?.currency}</Text>}
-            {props.editable && 
-            <CustomButton 
-                style={{ borderWidth: 0, padding: 0, marginLeft: 10, marginRight: 5, flex: 1, backgroundColor: Colors.dark }} 
-                onPress={onRemovePress}>
-                <View style={{ flex: 1, justifyContent: "center"}}>
-                    <TrashIcon width="20" height="20"/>
-                </View>
-            </CustomButton>}
+            {props.editable &&
+                <CustomButton
+                    style={{ borderWidth: 0, padding: 0, marginLeft: 10, marginRight: 5, flex: 1, backgroundColor: Colors.dark }}
+                    onPress={onRemovePress}>
+                    <View style={{ flex: 1, justifyContent: "center" }}>
+                        <TrashIcon width="20" height="20" />
+                    </View>
+                </CustomButton>}
         </View>
     );
 }

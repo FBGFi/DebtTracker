@@ -6,24 +6,25 @@ interface CustomInputProps extends ReactComponentProps {
     wrapperStyle?: StyleProp<ViewStyle>;
     style?: StyleProp<TextStyle>;
     defaultValue?: string;
+    value?: string;
     onChange?: (e: NativeSyntheticEvent<TextInputChangeEventData>) => void;
     onBlur?: (e: NativeSyntheticEvent<TextInputFocusEventData>) => void;
-    keyboardType?: "numeric";
+    keyboardType?: "numeric" | "phone-pad";
     multiline?: boolean;
     overWriteOnSelection?: boolean;
 }
 
 export const CustomInput = (props: CustomInputProps) => {
     const inputRef = React.useRef<TextInput>(null);
-    const [value, setValue] = useState(props.defaultValue || "");
+    const [value, setValue] = useState(props.value || props.defaultValue || "");
     const [focused, isFocused] = useState(false);
     const [selection, setSelection] = useState({
-        start: props.overWriteOnSelection ? 0 : value.length, 
+        start: props.overWriteOnSelection ? 0 : value.length,
         end: value.length
     });
 
     const focusInput = () => {
-        if(!focused){
+        if (!focused) {
             inputRef.current?.focus();
             isFocused(true);
         }
@@ -40,14 +41,21 @@ export const CustomInput = (props: CustomInputProps) => {
 
     const onBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
         isFocused(false);
-        if(props.keyboardType === "numeric" && (value.length === 0 || value === "0")) setValue("0.00");
+        if (props.keyboardType === "numeric") {
+            const numericValue = parseFloat(value);
+            if (isNaN(numericValue)) {
+                setValue("0.00");
+            } else { 
+                setValue(parseFloat(value).toFixed(2)); 
+            }
+        }
         setSelection({
-            start: props.overWriteOnSelection ? 0 : value.length, 
+            start: props.overWriteOnSelection ? 0 : value.length,
             end: value.length
         });
         props.onBlur && props.onBlur(e);
     }
-    
+
     return (
         <TouchableWithoutFeedback disabled={focused} delayPressIn={50} onPress={focusInput}>
             <View style={props.wrapperStyle}>
@@ -58,10 +66,10 @@ export const CustomInput = (props: CustomInputProps) => {
                         style={props.style}
                         multiline={props.multiline !== undefined ? props.multiline : true}
                         ref={inputRef}
-                        value={value}
+                        value={props.value ?? value}
                         onChange={onChange}
                         onBlur={onBlur}
-                        keyboardType={props.keyboardType}
+                        keyboardType={focused ? props.keyboardType : "default"}
                     />
                 </View>
             </View>

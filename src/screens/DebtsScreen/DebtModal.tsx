@@ -228,7 +228,7 @@ const PickerSwiper = (props: { debtId: string }) => {
             <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                decelerationRate={0.1}
+                decelerationRate={0.9}
                 ref={swiperRef}
                 onScrollEndDrag={onScrollEnd}>
                 <ScrollView contentContainerStyle={{ backgroundColor: Colors.dark }}>

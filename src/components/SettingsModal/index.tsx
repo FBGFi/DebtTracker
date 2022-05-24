@@ -129,6 +129,7 @@ export const SettingsModal = (props: SettingsModalProps) => {
                 style={styles.inputText}
                 multiline={false}
                 value={mobilePay}
+                keyboardType="phone-pad"
                 onChange={(e: NativeSyntheticEvent<TextInputFocusEventData>) => setMobilePay(e.nativeEvent.text)}
                 onBlur={formatAndSaveMobilePay}
                 wrapperStyle={[styles.inputWrapper, !validMobilePay && { borderColor: Colors.unPaidColor }]} />

@@ -60,6 +60,7 @@ export const DebtItem = (props: DebtItemProps) => {
                     wrapperStyle={{ flex: 2, justifyContent: "center" }}
                     style={styles.descriptionInput}
                     defaultValue={props.item.description}
+                    overWriteOnSelection={props.item.description === "-"}
                     onChange={onDescriptionChange}
                     onBlur={onDescriptionBlur} />
                 :
@@ -72,6 +73,7 @@ export const DebtItem = (props: DebtItemProps) => {
                         onBlur={onPriceBlur}
                         style={styles.priceInput}
                         keyboardType="numeric"
+                        overWriteOnSelection={props.item.price === 0}
                         defaultValue={props.item.price.toFixed(2)} />
                     <View style={{ justifyContent: 'center' }}><Text style={styles.currencyInput}> {state[props.debtId]?.currency}</Text></View>
                 </View>

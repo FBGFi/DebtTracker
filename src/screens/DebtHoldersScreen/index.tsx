@@ -14,6 +14,7 @@ interface DebtHoldersScreenProps extends ScreenProps {
 
 interface AddNewHolderInputProps extends ReactComponentProps {
     onSubmit: (debtHolderId?: string) => void;
+    onBlur: () => void;
 }
 
 const AddNewHolderInput = (props: AddNewHolderInputProps) => {
@@ -52,7 +53,7 @@ const AddNewHolderInput = (props: AddNewHolderInputProps) => {
                 color: Colors.lightText,
                 fontSize: 20,
                 fontFamily: "Quicksand-Medium",
-            }} onChangeText={(e) => setInput(e)} onSubmitEditing={onSubmitEditing} autoFocus={true} />
+            }} onBlur={props.onBlur} onChangeText={(e) => setInput(e)} onSubmitEditing={onSubmitEditing} autoFocus={true} />
         </View>
         <CustomButton style={{ flex: 1 }} title="Add" onPress={() => submit()} />
     </View>)
@@ -92,7 +93,7 @@ export const DebtHoldersScreen = (props: DebtHoldersScreenProps) => {
                     </ScrollView>
                 </View>
             </TouchableWithoutFeedback>
-            {inputVisible ? <AddNewHolderInput onSubmit={onNewDebtHolderSubmit} /> :
+            {inputVisible ? <AddNewHolderInput onBlur={() => setInputVisible(false)} onSubmit={onNewDebtHolderSubmit} /> :
                 <AddNewButton onPress={() => setInputVisible(true)} />}
         </>
     );

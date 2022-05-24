@@ -9,6 +9,7 @@ import { Colors } from "../../styles/colors";
 
 interface AddNewDebtInputProps extends ReactComponentProps {
     onSubmit: (debtId?: string) => void;
+    onBlur: () => void;
 }
 
 const AddNewDebtInput = (props: AddNewDebtInputProps) => {
@@ -56,7 +57,7 @@ const AddNewDebtInput = (props: AddNewDebtInputProps) => {
                 color: Colors.lightText,
                 fontSize: 20,
                 fontFamily: "Quicksand-Medium",
-            }} onChangeText={(e) => setInput(e)} onSubmitEditing={onSubmitEditing} autoFocus={true} />
+            }} onBlur={props.onBlur} onChangeText={(e) => setInput(e)} onSubmitEditing={onSubmitEditing} autoFocus={true} />
         </View>
         <CustomButton style={{ flex: 1 }} title="Add" onPress={() => submit()} />
     </View>)
@@ -94,7 +95,7 @@ export const DebtsScreen = (props: DebtsScreenProps) => {
                     </ScrollView>
                 </View>
             </TouchableWithoutFeedback>
-            {inputVisible ? <AddNewDebtInput onSubmit={onNewDebtSubmit} /> :
+            {inputVisible ? <AddNewDebtInput onBlur={() => setInputVisible(false)} onSubmit={onNewDebtSubmit} /> :
                 <AddNewButton onPress={() => setInputVisible(true)} />}
         </>
     );

@@ -40,6 +40,7 @@ export const CustomInput = (props: CustomInputProps) => {
 
     const onBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
         isFocused(false);
+        if(props.keyboardType === "numeric" && (value.length === 0 || value === "0")) setValue("0.00");
         setSelection({
             start: props.overWriteOnSelection ? 0 : value.length, 
             end: value.length
@@ -57,7 +58,7 @@ export const CustomInput = (props: CustomInputProps) => {
                         style={props.style}
                         multiline={props.multiline !== undefined ? props.multiline : true}
                         ref={inputRef}
-                        defaultValue={props.defaultValue}
+                        value={value}
                         onChange={onChange}
                         onBlur={onBlur}
                         keyboardType={props.keyboardType}

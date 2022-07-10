@@ -111,6 +111,7 @@ const EditButtons = (props: EditButtonsProps) => {
             `\nItems:\n${state[props.debtId].items.map((debtItem) => `${debtItem.description}: ${debtItem.price.toFixed(2)} ${state[props.debtId].currency}`).join("\n")}`,
             `\nTotal amount: ${calculateTotalDebt(state[props.debtId]).toFixed(2)} ${state[props.debtId].currency}`,
             `Per person: ${calculateUserDebt(state[props.debtId]).toFixed(2)} ${state[props.debtId].currency}`,
+            // TODO has a bug where additional commas are added for unused debt holders
             `\nDebt holders: ${Object.entries(debtHoldersState).map(([debtHolderId, debtHolder]) => {
                 if (state[props.debtId].debtHolders.includes(debtHolderId)) return debtHolder.name;
             }).join(", ")}`,

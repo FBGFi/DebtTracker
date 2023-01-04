@@ -1,2 +1,2 @@
-export * from './DebtHoldersScreen';
-export * from './DebtsScreen';
+export * from "./DebtHoldersScreen";
+export * from "./DebtsScreen";

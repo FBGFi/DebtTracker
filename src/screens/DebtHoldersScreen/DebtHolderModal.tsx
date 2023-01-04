@@ -1,12 +1,20 @@
 import React, { useState, useContext } from "react";
-import { Alert, GestureResponderEvent, TextInput, View, StyleSheet, NativeSyntheticEvent, TextInputSubmitEditingEventData } from "react-native";
+import {
+  Alert,
+  GestureResponderEvent,
+  TextInput,
+  View,
+  StyleSheet,
+  NativeSyntheticEvent,
+  TextInputSubmitEditingEventData,
+} from "react-native";
 import { ReactComponentProps } from "../../constants/types";
 import {
-    DebtHoldersContext,
-    DebtsContext, 
-    useRemoveDebtHolder, 
-    useUpdateDebtHolderName,
-    useRemoveDebtHolderFromAllDebts,
+  DebtHoldersContext,
+  DebtsContext,
+  useRemoveDebtHolder,
+  useUpdateDebtHolderName,
+  useRemoveDebtHolderFromAllDebts,
 } from "../../context";
 import { CustomButton, CustomModal } from "../../components";
 import { DebtPickerCard } from "./DebtPickerCard";
@@ -14,149 +22,196 @@ import { Colors } from "../../styles/colors";
 import { PenIcon, TrashIcon } from "../../assets";
 
 interface DebtHolderModalProps extends ReactComponentProps {
-    debtHolderId: string;
-    setModal: (modal: any) => void;
+  debtHolderId: string;
+  setModal: (modal: any) => void;
 }
 interface EditDebtHolderInputProps extends ReactComponentProps {
-    onSubmit: (input: string) => void;
-    defaultValue: string;
-    onBlur: () => void;
+  onSubmit: (input: string) => void;
+  defaultValue: string;
+  onBlur: () => void;
 }
 
 interface EditButtonsProps extends DebtHolderModalProps {
-    setEditActive: (active: boolean) => void;
+  setEditActive: (active: boolean) => void;
 }
 
 const EditButtons = (props: EditButtonsProps) => {
-    const { state } = useContext(DebtHoldersContext);
-    const [removeDebtHolder] = useRemoveDebtHolder();
-    const [removeDebtHolderFromAllDebts] = useRemoveDebtHolderFromAllDebts();
+  const { state } = useContext(DebtHoldersContext);
+  const [removeDebtHolder] = useRemoveDebtHolder();
+  const [removeDebtHolderFromAllDebts] = useRemoveDebtHolderFromAllDebts();
 
-    const onRemovePress = () => {
-        Alert.alert(
-            "Confirm removal",
-            `Are you sure you want to remove ${state[props.debtHolderId].name}?`,
-            [
-                {
-                    text: "Cancel",
-                    style: "cancel"
-                },
-                {
-                    text: "OK",
-                    onPress: () => {
-                        props.setModal(null);
-                        removeDebtHolderFromAllDebts(props.debtHolderId);
-                        removeDebtHolder(props.debtHolderId);
-                    },
-                    style: "default"
-                }
-            ]
-        );
-    }
-
-    return (
-        <View style={{ flexDirection: "row", justifyContent: "flex-end", padding: 5, paddingRight: 5 }}>
-            <CustomButton style={styles.editButton} onPress={onRemovePress}>
-                <View style={{ height: 25, width: 25 }}>
-                    <TrashIcon />
-                </View>
-            </CustomButton>
-            <CustomButton style={styles.editButton} onPress={() => props.setEditActive(true)}>
-                <View style={{ height: 25, width: 25 }}>
-                    <PenIcon />
-                </View>
-            </CustomButton>
-        </View>
+  const onRemovePress = () => {
+    Alert.alert(
+      "Confirm removal",
+      `Are you sure you want to remove ${state[props.debtHolderId].name}?`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            props.setModal(null);
+            removeDebtHolderFromAllDebts(props.debtHolderId);
+            removeDebtHolder(props.debtHolderId);
+          },
+          style: "default",
+        },
+      ],
     );
-}
+  };
+
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        padding: 5,
+        paddingRight: 5,
+      }}>
+      <CustomButton style={styles.editButton} onPress={onRemovePress}>
+        <View style={{ height: 25, width: 25 }}>
+          <TrashIcon />
+        </View>
+      </CustomButton>
+      <CustomButton
+        style={styles.editButton}
+        onPress={() => props.setEditActive(true)}>
+        <View style={{ height: 25, width: 25 }}>
+          <PenIcon />
+        </View>
+      </CustomButton>
+    </View>
+  );
+};
 
 // TODO combine with one in debtmodal
 const EditDebtHolderInput = (props: EditDebtHolderInputProps) => {
-    const [input, setInput] = useState(props.defaultValue);
+  const [input, setInput] = useState(props.defaultValue);
 
-    const inputChanged = (e: string) => {
-        setInput(e);
-    }
+  const inputChanged = (e: string) => {
+    setInput(e);
+  };
 
-    const onSubmitEditing = (e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
-        props.onSubmit(input);
-    };
+  const onSubmitEditing = (
+    e: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
+  ) => {
+    props.onSubmit(input);
+  };
 
-    const submit = () => {
-        props.onSubmit(input);
-    }
+  const submit = () => {
+    props.onSubmit(input);
+  };
 
-    return (<View style={{ flexDirection: "row", paddingHorizontal: 5, paddingVertical: 10, backgroundColor: Colors.darkestBlue }}>
-        <View style={{
-            flex: 5,
-            paddingHorizontal: 10,
-            borderTopWidth: 3,
-            borderBottomWidth: 3,
-            borderLeftWidth: 3,
-            borderColor: Colors.orange
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        paddingHorizontal: 5,
+        paddingVertical: 10,
+        backgroundColor: Colors.darkestBlue,
+      }}>
+      <View
+        style={{
+          flex: 5,
+          paddingHorizontal: 10,
+          borderTopWidth: 3,
+          borderBottomWidth: 3,
+          borderLeftWidth: 3,
+          borderColor: Colors.orange,
         }}>
-            <TextInput style={{
-                color: Colors.lightText,
-                fontSize: 20,
-                fontFamily: "Quicksand-Medium",
-            }} onBlur={props.onBlur} value={input} onChangeText={inputChanged} onSubmitEditing={onSubmitEditing} autoFocus={true} />
-        </View>
-        <CustomButton style={{ flex: 1 }} title="Save" onPress={() => submit()} />
-    </View>)
-}
+        <TextInput
+          style={{
+            color: Colors.lightText,
+            fontSize: 20,
+            fontFamily: "Quicksand-Medium",
+          }}
+          onBlur={props.onBlur}
+          value={input}
+          onChangeText={inputChanged}
+          onSubmitEditing={onSubmitEditing}
+          autoFocus={true}
+        />
+      </View>
+      <CustomButton style={{ flex: 1 }} title="Save" onPress={() => submit()} />
+    </View>
+  );
+};
 
 export const DebtHolderModal = (props: DebtHolderModalProps) => {
-    const { state } = useContext(DebtHoldersContext);
-    const [editActive, setEditActive] = useState(false);
-    const [focusedDebtId, setFocusedDebtId] = useState<string | undefined>(undefined);
-    const [updateDebtHolderName] = useUpdateDebtHolderName();
-    const debtsState = useContext(DebtsContext).state;
+  const { state } = useContext(DebtHoldersContext);
+  const [editActive, setEditActive] = useState(false);
+  const [focusedDebtId, setFocusedDebtId] = useState<string | undefined>(
+    undefined,
+  );
+  const [updateDebtHolderName] = useUpdateDebtHolderName();
+  const debtsState = useContext(DebtsContext).state;
 
-    // This does not trigger if the picker card is clicked, due to it being Touchable
-    const onModalPress = (event: GestureResponderEvent) => {
-        setFocusedDebtId(undefined);
+  // This does not trigger if the picker card is clicked, due to it being Touchable
+  const onModalPress = (event: GestureResponderEvent) => {
+    setFocusedDebtId(undefined);
+  };
+
+  const onDebtPickerCardPress = (debtId?: string) => {
+    // Handle double pressing
+    if (focusedDebtId === debtId) {
+      setFocusedDebtId(undefined);
+    } else {
+      setFocusedDebtId(debtId);
     }
+  };
 
-    const onDebtPickerCardPress = (debtId?: string) => {
-        // Handle double pressing
-        if (focusedDebtId === debtId) {
-            setFocusedDebtId(undefined);
-        } else {
-            setFocusedDebtId(debtId);
+  const onEditSubmit = (input: string) => {
+    setEditActive(false);
+    updateDebtHolderName(props.debtHolderId, input);
+  };
+
+  return (
+    <CustomModal
+      setModal={() => {
+        props.setModal(null);
+      }}
+      onModalPress={onModalPress}
+      headerButtons={
+        <EditButtons
+          setEditActive={setEditActive}
+          debtHolderId={props.debtHolderId}
+          setModal={props.setModal}
+        />
+      }
+      outSideContent={
+        editActive && (
+          <EditDebtHolderInput
+            onBlur={() => setEditActive(false)}
+            defaultValue={state[props.debtHolderId].name}
+            onSubmit={onEditSubmit}
+          />
+        )
+      }
+      title={state[props.debtHolderId].name}>
+      {Object.keys(state[props.debtHolderId].debts).map((key) => {
+        if (debtsState[key].debtHolders.includes(props.debtHolderId)) {
+          return (
+            <DebtPickerCard
+              key={key}
+              onInteract={onDebtPickerCardPress}
+              debtId={key}
+              focusedDebtId={focusedDebtId}
+              debtHolderId={props.debtHolderId}
+            />
+          );
         }
-    }
-
-    const onEditSubmit = (input: string) => {
-        setEditActive(false);
-        updateDebtHolderName(props.debtHolderId, input);
-    }
-
-    return <CustomModal
-        setModal={() => {
-            props.setModal(null);
-        }}
-        onModalPress={onModalPress}
-        headerButtons={<EditButtons setEditActive={setEditActive} debtHolderId={props.debtHolderId} setModal={props.setModal} />}
-        outSideContent={editActive && <EditDebtHolderInput onBlur={() => setEditActive(false)} defaultValue={state[props.debtHolderId].name} onSubmit={onEditSubmit} />}
-        title={state[props.debtHolderId].name}>
-        {Object.keys(state[props.debtHolderId].debts).map(key => {
-            if (debtsState[key].debtHolders.includes(props.debtHolderId)) {
-                return (<DebtPickerCard
-                    key={key}
-                    onInteract={onDebtPickerCardPress}
-                    debtId={key}
-                    focusedDebtId={focusedDebtId}
-                    debtHolderId={props.debtHolderId} />);
-            }
-        })}
+      })}
     </CustomModal>
-}
+  );
+};
 
 const styles = StyleSheet.create({
-    editButton: {
-        paddingHorizontal: 5,
-        paddingVertical: 3,
-        marginLeft: 5,
-        borderWidth: 0,
-    }
-})
+  editButton: {
+    paddingHorizontal: 5,
+    paddingVertical: 3,
+    marginLeft: 5,
+    borderWidth: 0,
+  },
+});

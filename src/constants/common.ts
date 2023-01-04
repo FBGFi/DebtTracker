@@ -1,3 +1,3 @@
 export const commonConstants = {
-    gapAmount: 10
+  gapAmount: 10,
 };

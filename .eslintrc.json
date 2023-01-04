@@ -1,0 +1,23 @@
+{
+  "root": true,
+  "extends": ["@react-native-community", "prettier", "plugin:prettier/recommended"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "prettier"],
+  "rules": {
+    "prettier/prettier": "error"
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "@typescript-eslint/no-shadow": ["warn"],
+        "@typescript-eslint/no-unused-vars": ["warn"],
+        "prettier/prettier": "error",
+        "react-hooks/exhaustive-deps": "warn",
+        "no-shadow": "off",
+        "no-undef": "off",
+        "react-native/no-inline-styles": "off"
+      }
+    }
+  ]
+}

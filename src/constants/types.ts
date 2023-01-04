@@ -1,13 +1,11 @@
 export interface ReactComponentProps {
-    children?: JSX.Element | JSX.Element[] | any;
+  children?: JSX.Element | JSX.Element[] | any;
 }
 
-export interface ScreenProps extends ReactComponentProps {
-    
-}
+export interface ScreenProps extends ReactComponentProps {}
 
 export interface SVGProps {
-    fill?: string;
-    height?: number | string;
-    width?: number | string;
+  fill?: string;
+  height?: number | string;
+  width?: number | string;
 }

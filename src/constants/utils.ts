@@ -18,7 +18,7 @@ export const calculatePaidDebt = (
   if (debt.debtHolders.length === 0) return 0;
   const userDebt = calculateUserDebt(debt);
   let paidDebt: number = 0;
-  Object.keys(debtHoldersState).map((id) => {
+  Object.keys(debtHoldersState).forEach((id) => {
     if (debtHoldersState[id].debts[debtId]) paidDebt += userDebt;
   });
   return paidDebt;

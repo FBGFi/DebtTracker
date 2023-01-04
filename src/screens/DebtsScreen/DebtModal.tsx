@@ -149,10 +149,12 @@ const EditButtons = (props: EditButtonsProps) => {
         state[props.debtId].currency
       }`,
       `\nDebt holders: ${Object.entries(debtHoldersState)
-        .map(([debtHolderId, debtHolder]) => {
-          if (state[props.debtId].debtHolders.includes(debtHolderId))
-            return debtHolder.name;
-        })
+        .reduce((debtHolders, [debtHolderId, debtHolder]) => {
+          if (state[props.debtId].debtHolders.includes(debtHolderId)) {
+            return [...debtHolders, debtHolder.name];
+          }
+          return debtHolders;
+        }, [] as string[])
         .join(", ")}`,
       `\nRecipient: ${settingsState.username}`,
       `Bank account: ${settingsState.bankAccount}`,
